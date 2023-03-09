@@ -4,6 +4,7 @@ const InputForm = () => {
   // const [quoteToType, setQuoteToType] = useState<string>(
   //   'Whoever fights monsters should see to it that in the process he does not become a monster. And if you gaze long enough into an abyss, the abyss will gaze back into you.'
   // );
+  // const [quoteToType, setQuoteToType] = useState<string>(
   const [quoteToType, setQuoteToType] = useState<string>(
     'This is a typing test so type faster'
   );
@@ -17,15 +18,45 @@ const InputForm = () => {
     }
   };
 
+  function handleKeyPress(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    // Set textarea text to the entire string that has been typed
+    setUserTextInput(e.target.value);
+
+    // Keystroke that was JUST pressed
+    const keyPressed: string = e.target.value[e.target.value.length - 1];
+    // The key that should be typed next
+    const nextLetterToType: string = quoteToType[userTextInput.length];
+    console.log('keyPressed', keyPressed);
+    console.log(
+      'nextChar',
+      nextLetterToType === ' ' ? 'space' : nextLetterToType
+    );
+
+    // If the next letter  is a space
+    if (nextLetterToType === ' ') {
+      if (keyPressed !== ' ') {
+        console.log(
+          'keys already pressed',
+          `${quoteToType.slice(
+            0,
+            userTextInput.length
+          )}${keyPressed}${quoteToType.slice(userTextInput.length)}`
+        );
+        setQuoteToType(
+          `${quoteToType.slice(
+            0,
+            userTextInput.length
+          )}${keyPressed}${quoteToType.slice(userTextInput.length)}`
+        );
+      }
+    }
+  }
+
   useEffect(() => {
     setTestComplete(quoteToType.length === userTextInput.length);
   }, [quoteToType, userTextInput]);
 
-  useEffect(() => {
-    console.log('userTextInput', userTextInput.length);
-    console.log('next letter', quoteToType[userTextInput.length]);
-    console.log('userTextInput', userTextInput);
-  }, [userTextInput]);
+  useEffect(() => {}, [userTextInput]);
 
   return (
     <div className="flex pt-44 flex-col items-center gap-4">
@@ -53,8 +84,9 @@ const InputForm = () => {
         <textarea
           className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setUserTextInput(e.target.value);
+            handleKeyPress(e);
           }}
+          // onKeyDown={(e) => handleKeyPress(e)}
           value={userTextInput}
         />
       </div>
