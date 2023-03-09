@@ -1,5 +1,8 @@
 const Sequelize = require('sequelize');
+const dotenv = require('dotenv').config();
 const db = require('../database.cjs');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 const User = db.define('user', {
   username: {
@@ -41,5 +44,48 @@ const User = db.define('user', {
     },
   },
 });
+// Checkpassword
+User.prototype.checkPassword = async function (potentialPassword) {
+return await bcrypt.compare(potentialPassword, this.password)
+}
+
+User.prototype.createToken = async function (user) {
+  try {
+   return await jwt.sign({ id: user.id }, process.env.JWT)
+  } catch (err) {
+    console.log('User.id is not valid')
+    return 'User.id is not valid'
+  }
+}
+User.findByToken = async function (token) {
+  try {
+const { id } = await jwt.verify(token, process.env.JWT)
+const user = User.findByPk(id)
+return user
+  } catch (err) {
+const error = Error('bad token')
+error.status = 401
+throw error
+  }
+}
+
+// User.authenticate = async function (username, password) {
+
+// }
+User.isAdmin = async function (token) {
+  try {
+  const user = await jwt.verify(token, process.env.JWT)
+  return user.isAdmin
+} catch (err) {
+  const error = Error('bad token')
+  error.status = 401
+  throw error
+}
+
+}
+//HASHES PASSWORD ON CREATION
+User.beforeCreate(async function (user) {
+     user.password = await bcrypt.hash(user.password, Number(process.env.SALT_ROUNDS))
+})
 
 module.exports = User;
