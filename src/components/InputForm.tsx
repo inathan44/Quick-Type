@@ -11,6 +11,9 @@ const InputForm = () => {
   const [userTextInput, setUserTextInput] = useState<string>('');
   const [testComplete, setTestComplete] = useState<boolean>(false);
 
+  const lettersAvailable =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+
   const letterColor = (idx: number): string => {
     if (idx > userTextInput.length - 1) return '#55848a';
     else {
@@ -52,6 +55,15 @@ const InputForm = () => {
     }
   }
 
+  function TESTING(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+    console.log('available letter', lettersAvailable.includes(e.key));
+    if (e.key === 'Backspace') {
+      setUserTextInput((prev) => prev.slice(0, prev.length - 1));
+    } else if (lettersAvailable.includes(e.key)) {
+      setUserTextInput((prev) => prev.concat(e.key));
+    }
+  }
+
   useEffect(() => {
     setTestComplete(quoteToType.length === userTextInput.length);
   }, [quoteToType, userTextInput]);
@@ -82,14 +94,15 @@ const InputForm = () => {
           ))}
         </h2>
         <textarea
-          className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            handleKeyPress(e);
-          }}
-          // onKeyDown={(e) => handleKeyPress(e)}
           value={userTextInput}
+          className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+          // onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+          //   handleKeyPress(e);
+          // }}
+          onKeyDown={(e) => TESTING(e)}
         />
       </div>
+      <p>{userTextInput}</p>
       <button
         onClick={() => {
           setUserTextInput('');
