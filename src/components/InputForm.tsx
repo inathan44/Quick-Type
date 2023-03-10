@@ -163,7 +163,7 @@ const InputForm = () => {
             <span
               className={
                 idx === userTextInput.length - 1
-                  ? "after:content-['|'] after:animate-[pulse_2s_infinite] after:text-purple-500"
+                  ? "after:content-['|'] after:animate-[cursor-blink_2s_infinite] after:opacity-.1 after:text-yellow-400"
                   : ''
               }
               key={idx}
