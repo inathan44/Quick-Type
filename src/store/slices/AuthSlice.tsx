@@ -9,9 +9,15 @@ const initialState: InitialState = {
   loading: false,
 };
 
-export const loggedIn = createAsyncThunk('Checked if logged in', () => {});
+export const loggedIn = createAsyncThunk(
+  'Checked if logged in',
+  (x, { rejectWithValue }) => {}
+);
 
-export const logInUser = createAsyncThunk('Login User', () => {});
+export const logInUser = createAsyncThunk(
+  'Login User',
+  (x, { rejectWithValue }) => {}
+);
 
 const AuthSlice = createSlice({
   name: 'Auth',
