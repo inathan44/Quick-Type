@@ -16,6 +16,6 @@ router.use((req, res, next) => {
   next(err);
 });
 
-// router.get('/addTypingStats', (req, res, next) => {});
+// router.post('/typingStats', (req, res, next) => {});
 
 module.exports = router;
