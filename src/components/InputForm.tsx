@@ -15,67 +15,34 @@ interface KeyLogic {
 }
 
 const InputForm = () => {
-  const [quoteToType, setQuoteToType] = useState<string>(
-    'This is a typing test so type faster'
-  );
-  const [excessQuoteToType, setExcessQuoteToType] = useState<string>('');
-  console.log('excess quote:', excessQuoteToType);
+  const quote =
+    'You take the blue pill... the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill... you stay in Wonderland, and I show you how deep the rabbit hole goes';
 
-  const [duplicateQuoteToType, setDuplicateQuoteToType] = useState<string>(
-    'This is a typing test so type faster'
-  );
+  // const quote = '<p>Hello world</p> <h1>I am the best</h1>';
+
+  const [quoteToType, setQuoteToType] = useState<string>(quote);
+  const [excessQuoteToType, setExcessQuoteToType] = useState<string>('');
+
+  const [duplicateQuoteToType, setDuplicateQuoteToType] =
+    useState<string>(quote);
   const [userTextInput, setUserTextInput] = useState<string>('');
+
   const [testComplete, setTestComplete] = useState<boolean>(false);
 
   const lettersAvailable =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789';
 
   const letterColor = (idx: number): string => {
     if (idx > userTextInput.length - 1) return '#55848a';
+    else if (isExcessLetter(idx)) return '#f77795';
     else {
-      return quoteToType[idx] === userTextInput[idx] && !isExcessLetter(idx)
-        ? 'white'
-        : 'red';
+      return quoteToType[idx] === userTextInput[idx] ? 'white' : 'red';
     }
   };
 
-  function isExcessLetter(idx): boolean {
+  function isExcessLetter(idx: number): boolean {
     if (excessQuoteToType[idx] === '~') return true;
     return false;
-  }
-
-  function handleKeyPress(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    // Set textarea text to the entire string that has been typed
-    setUserTextInput(e.target.value);
-
-    // Keystroke that was JUST pressed
-    const keyPressed: string = e.target.value[e.target.value.length - 1];
-    // The key that should be typed next
-    const nextLetterToType: string = quoteToType[userTextInput.length];
-    console.log('keyPressed', keyPressed);
-    console.log(
-      'nextChar',
-      nextLetterToType === ' ' ? 'space' : nextLetterToType
-    );
-
-    // If the next letter  is a space
-    if (nextLetterToType === ' ') {
-      if (keyPressed !== ' ') {
-        console.log(
-          'keys already pressed',
-          `${quoteToType.slice(
-            0,
-            userTextInput.length
-          )}${keyPressed}${quoteToType.slice(userTextInput.length)}`
-        );
-        setQuoteToType(
-          `${quoteToType.slice(
-            0,
-            userTextInput.length
-          )}${keyPressed}${quoteToType.slice(userTextInput.length)}`
-        );
-      }
-    }
   }
 
   function isValidChar(char: string): boolean {
@@ -96,9 +63,9 @@ const InputForm = () => {
         userTextInput.split(' ')[currentWordNumber - 1].length - 1
       );
     const reassignWord = quoteWord.concat(
-      userTypedWord.slice(quoteWordLength, userInputWordLength - 2)
+      userTypedWord.slice(quoteWordLength, userInputWordLength - 1)
     );
-    const splitQuote = duplicateQuoteToType.split(' ');
+    const splitQuote = quoteToType.split(' ');
     return {
       currentWordNumber,
       userInputWordLength,
@@ -111,9 +78,12 @@ const InputForm = () => {
   }
 
   // Returns the new string that should replace the quoteToType
-  function remakeQuoteString(word: string): string {
+  function remakeQuoteString(): string {
     const logicData = deleteExcessLettersData(userTextInput);
-    const splitQuote = quoteToType.split(' ');
+    const splitQuote = logicData.splitQuote;
+    console.log('<<<<<SPLIT QUOTE>>>>>>>', splitQuote);
+    console.log('<<<<<reassignWord>>>>>>', logicData.reassignWord);
+    console.log('current word num', logicData.currentWordNumber - 1);
     // Replacing the current word with what was deleted from user input
     splitQuote[logicData.currentWordNumber - 1] = logicData.reassignWord;
     return splitQuote.join(' ');
@@ -121,7 +91,6 @@ const InputForm = () => {
 
   function TESTING(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
     const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
-    console.log('is the next character a space? ', nextCharIsSpace);
 
     // If the character that we are typing is supposed to be a space
     if (nextCharIsSpace) {
@@ -145,14 +114,14 @@ const InputForm = () => {
           console.log(logicData);
           if (logicData.userInputWordLength > logicData.quoteWordLength) {
             if (e.key === 'Backspace') {
-              setQuoteToType(remakeQuoteString(''));
+              setQuoteToType(remakeQuoteString());
               setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
               setUserTextInput((prev) => prev.slice(0, prev.length - 1));
-              setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
             }
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
           } else {
             if (e.key === 'Backspace') {
+              console.log('normal word length');
               setUserTextInput((prev) => prev.slice(0, prev.length - 1));
               setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
             }
@@ -167,6 +136,9 @@ const InputForm = () => {
       if (e.key === 'Backspace') {
         setUserTextInput((prev) => prev.slice(0, prev.length - 1));
         setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
+      } else if (e.key === ' ') {
+        setUserTextInput((prev) => prev.concat('*'));
+        setExcessQuoteToType((prev) => prev.concat('*'));
       } else if (isValidChar(e.key)) {
         setUserTextInput((prev) => prev.concat(e.key));
         setExcessQuoteToType((prev) => prev.concat(e.key));
@@ -185,7 +157,6 @@ const InputForm = () => {
       <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
         Test Complete
       </h1>
-      <h1>Duplicate quote (won't change): "{duplicateQuoteToType}"</h1>
       <div className="relative border-2 px-8 py-4 rounded-md text-3xl">
         <h2>
           {quoteToType.split('').map((char, idx) => (
@@ -207,17 +178,15 @@ const InputForm = () => {
         <textarea
           value={userTextInput}
           className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
-          // onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          //   handleKeyPress(e);
-          // }}
           onChange={() => {}}
           onKeyDown={(e) => TESTING(e)}
         />
       </div>
-      <p>What the user typed:{userTextInput}</p>
       <button
         onClick={() => {
           setUserTextInput('');
+          setQuoteToType(duplicateQuoteToType);
+          setExcessQuoteToType('');
         }}
       >
         Reset Test
