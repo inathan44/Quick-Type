@@ -1,17 +1,25 @@
-const {User, db} = require('./server/db/index.cjs')
+const { User, Score, db } = require('./server/db/index.cjs');
 
 const seed = async () => {
   try {
     await db.sync();
     await User.create({
-          username: 'catcatcat',
-          email: 'mother@gmail.com',
-          password: '12345678910',
-      })
-      db.close()
+      username: 'EasyName',
+      email: 'mother@gmail.com',
+      password: 'EasyName',
+    });
+    await Score.create({
+      WPM: 10,
+      type: 'english',
+      time: 100,
+      incorrectLetters: 0,
+      lettersTyped: 100,
+      userId: 1,
+    });
+    db.close();
   } catch (err) {
-    console.error(err)
-      console.log('Seeding failed')
+    console.error(err);
+    console.log('Seeding failed');
   }
-}
-seed()
+};
+seed();
