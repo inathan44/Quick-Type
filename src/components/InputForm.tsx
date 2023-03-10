@@ -81,9 +81,6 @@ const InputForm = () => {
   function remakeQuoteString(): string {
     const logicData = deleteExcessLettersData(userTextInput);
     const splitQuote = logicData.splitQuote;
-    console.log('<<<<<SPLIT QUOTE>>>>>>>', splitQuote);
-    console.log('<<<<<reassignWord>>>>>>', logicData.reassignWord);
-    console.log('current word num', logicData.currentWordNumber - 1);
     // Replacing the current word with what was deleted from user input
     splitQuote[logicData.currentWordNumber - 1] = logicData.reassignWord;
     return splitQuote.join(' ');
@@ -105,23 +102,16 @@ const InputForm = () => {
           setUserTextInput((prev) => prev.concat(e.key));
           setExcessQuoteToType((prev) => prev.concat('~'));
         } else if (e.key === 'Backspace') {
-          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
           // When Backspace is pressed but space SHOULD have been pressed
-          console.log(
-            'you just pressed backspace when you are supposed to press space'
-          );
           const logicData = deleteExcessLettersData(userTextInput);
-          console.log(logicData);
           if (logicData.userInputWordLength > logicData.quoteWordLength) {
             if (e.key === 'Backspace') {
               setQuoteToType(remakeQuoteString());
               setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
               setUserTextInput((prev) => prev.slice(0, prev.length - 1));
             }
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
           } else {
             if (e.key === 'Backspace') {
-              console.log('normal word length');
               setUserTextInput((prev) => prev.slice(0, prev.length - 1));
               setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
             }
