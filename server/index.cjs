@@ -11,7 +11,7 @@ app.use('/api', require('./api.cjs'));
 app.use((err, req, res, next) => {
   console.error(err);
   console.error(err.stack);
-  res.status(err.status(500).send(err.message('internal server error')));
+  res.status(err.status || 500).send(err.message('internal server error'));
 });
 
 async function init() {

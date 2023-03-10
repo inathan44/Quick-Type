@@ -10,6 +10,12 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+router.use((req, res, next) => {
+  const err = new Error('API ROUTE NOT FOUND');
+  err.status = 404;
+  next(err);
+});
+
 // router.get('/addTypingStats', (req, res, next) => {});
 
 module.exports = router;
