@@ -1,146 +1,41 @@
-import React, { useEffect, useState } from 'react';
-
-// What number word are we on?
-// compare the duplicate word length with the changes word length
-// allow deletion if the changed word length is longer than the duplicate word length
-
-interface KeyLogic {
-  currentWordNumber: number;
-  userInputWordLength: number;
-  quoteWordLength: number;
-  quoteWord: string;
-  userTypedWord: string;
-  reassignWord: string;
-  splitQuote: string[];
-}
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  selectTestComplete,
+  setTestComplete,
+  selectQuoteToType,
+  setQuoteToType,
+  selectLettersAvailable,
+  setExcessQuoteToType,
+  selectExcessQuoteToType,
+  selectDuplicateQuoteToType,
+  setUserTextInput,
+  selectUserTextInput,
+} from '../store/slices/TypeInputSlice';
+import TypeBoxText from './TypeBoxText';
+import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
 
 const InputForm = () => {
-  const quote =
-    'You take the blue pill... the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill... you stay in Wonderland, and I show you how deep the rabbit hole goes';
+  const dispatch = useAppDispatch();
 
-  // const quote = '<p>Hello world</p> <h1>I am the best</h1>';
+  const testComplete: boolean = useAppSelector(selectTestComplete);
+  const lettersAvailable: string = useAppSelector(selectLettersAvailable);
+  const quoteToType: string = useAppSelector(selectQuoteToType);
+  const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
+  const userTextInput: string = useAppSelector(selectUserTextInput);
+  const duplicateQuoteToType: string = useAppSelector(
+    selectDuplicateQuoteToType
+  );
 
-  const [quoteToType, setQuoteToType] = useState<string>(quote);
-  const [excessQuoteToType, setExcessQuoteToType] = useState<string>('');
-
-  const [duplicateQuoteToType, setDuplicateQuoteToType] =
-    useState<string>(quote);
-  const [userTextInput, setUserTextInput] = useState<string>('');
-
-  const [testComplete, setTestComplete] = useState<boolean>(false);
-
-  const lettersAvailable =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789';
-
-  const letterColor = (idx: number): string => {
-    if (idx > userTextInput.length - 1) return '#55848a';
-    else if (isExcessLetter(idx)) return '#f77795';
-    else {
-      return quoteToType[idx] === userTextInput[idx] ? 'white' : 'red';
-    }
-  };
-
-  function isExcessLetter(idx: number): boolean {
-    if (excessQuoteToType[idx] === '~') return true;
-    return false;
-  }
-
+  // Checks if key pressed is part of the character bank
+  // Stops other keys from interfering with test
   function isValidChar(char: string): boolean {
     return lettersAvailable.includes(char);
   }
 
-  function deleteExcessLettersData(sentence: string): KeyLogic {
-    const currentWordNumber = sentence.split(' ').length;
-    const userInputWordLength =
-      userTextInput.split(' ')[currentWordNumber - 1].length;
-    const quoteWordLength =
-      duplicateQuoteToType.split(' ')[currentWordNumber - 1].length;
-    const quoteWord = duplicateQuoteToType.split(' ')[currentWordNumber - 1];
-    const userTypedWord = userTextInput
-      .split(' ')
-      [currentWordNumber - 1].slice(
-        0,
-        userTextInput.split(' ')[currentWordNumber - 1].length - 1
-      );
-    const reassignWord = quoteWord.concat(
-      userTypedWord.slice(quoteWordLength, userInputWordLength - 1)
-    );
-    const splitQuote = quoteToType.split(' ');
-    return {
-      currentWordNumber,
-      userInputWordLength,
-      quoteWordLength,
-      quoteWord,
-      userTypedWord,
-      reassignWord,
-      splitQuote,
-    };
-  }
-
-  // Returns the new string that should replace the quoteToType
-  function remakeQuoteString(): string {
-    const logicData = deleteExcessLettersData(userTextInput);
-    const splitQuote = logicData.splitQuote;
-    // Replacing the current word with what was deleted from user input
-    splitQuote[logicData.currentWordNumber - 1] = logicData.reassignWord;
-    return splitQuote.join(' ');
-  }
-
-  function TESTING(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
-    const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
-
-    // If the character that we are typing is supposed to be a space
-    if (nextCharIsSpace) {
-      // If the character IS NOT a space, adjust the quote to reflect the mistyped extra letters
-      if (e.key !== ' ') {
-        if (isValidChar(e.key)) {
-          setQuoteToType(
-            `${quoteToType.slice(0, userTextInput.length)}${
-              e.key
-            }${quoteToType.slice(userTextInput.length)}`
-          );
-          setUserTextInput((prev) => prev.concat(e.key));
-          setExcessQuoteToType((prev) => prev.concat('~'));
-        } else if (e.key === 'Backspace') {
-          // When Backspace is pressed but space SHOULD have been pressed
-          const logicData = deleteExcessLettersData(userTextInput);
-          if (logicData.userInputWordLength > logicData.quoteWordLength) {
-            if (e.key === 'Backspace') {
-              setQuoteToType(remakeQuoteString());
-              setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
-              setUserTextInput((prev) => prev.slice(0, prev.length - 1));
-            }
-          } else {
-            if (e.key === 'Backspace') {
-              setUserTextInput((prev) => prev.slice(0, prev.length - 1));
-              setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
-            }
-          }
-        }
-      } else {
-        // If the character is supposed to be a space and is a space, proceed as normal
-        setUserTextInput((prev) => prev.concat(e.key));
-        setExcessQuoteToType((prev) => prev.concat(e.key));
-      }
-    } else {
-      if (e.key === 'Backspace') {
-        setUserTextInput((prev) => prev.slice(0, prev.length - 1));
-        setExcessQuoteToType((prev) => prev.slice(0, prev.length - 1));
-      } else if (e.key === ' ') {
-        setUserTextInput((prev) => prev.concat('*'));
-        setExcessQuoteToType((prev) => prev.concat('*'));
-      } else if (isValidChar(e.key)) {
-        setUserTextInput((prev) => prev.concat(e.key));
-        setExcessQuoteToType((prev) => prev.concat(e.key));
-      }
-    }
-  }
-
   useEffect(() => {
-    setTestComplete(quoteToType.length === userTextInput.length);
+    dispatch(setTestComplete(quoteToType.length === userTextInput.length));
   }, [quoteToType, userTextInput]);
-
-  useEffect(() => {}, [userTextInput]);
 
   return (
     <div className="flex pt-44 flex-col items-center gap-4">
@@ -148,41 +43,114 @@ const InputForm = () => {
         Test Complete
       </h1>
       <div className="relative border-2 px-8 py-4 rounded-md text-3xl">
-        <h2>
-          {quoteToType.split('').map((char, idx) => (
-            <span
-              className={
-                idx === userTextInput.length - 1
-                  ? "after:content-['|'] after:animate-[cursor-blink_2s_infinite] after:opacity-.1 after:text-yellow-400"
-                  : ''
-              }
-              key={idx}
-              style={{
-                color: letterColor(idx),
-              }}
-            >
-              {char}
-            </span>
-          ))}
-        </h2>
+        <TypeBoxText />
         <textarea
           value={userTextInput}
           className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
           onChange={() => {}}
-          onKeyDown={(e) => TESTING(e)}
+          onKeyDown={(e) => handleKeyPress(e)}
         />
       </div>
       <button
         onClick={() => {
-          setUserTextInput('');
-          setQuoteToType(duplicateQuoteToType);
-          setExcessQuoteToType('');
+          dispatch(setUserTextInput(''));
+          dispatch(setQuoteToType(duplicateQuoteToType));
+          dispatch(setExcessQuoteToType(''));
         }}
       >
         Reset Test
       </button>
     </div>
   );
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
+
+  function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+    const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
+
+    // If the character that we are typing is supposed to be a space
+    if (nextCharIsSpace) {
+      // If the character IS NOT a space, adjust the quote to reflect the mistyped extra letters
+      if (e.key !== ' ') {
+        if (isValidChar(e.key)) {
+          dispatch(
+            setQuoteToType(
+              `${quoteToType.slice(0, userTextInput.length)}${
+                e.key
+              }${quoteToType.slice(userTextInput.length)}`
+            )
+          );
+          dispatch(setUserTextInput(userTextInput.concat(e.key)));
+          dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
+        } else if (e.key === 'Backspace') {
+          // When Backspace is pressed but space SHOULD have been pressed
+          const logicData = deleteExcessLettersData(
+            userTextInput,
+            duplicateQuoteToType,
+            quoteToType
+          );
+          if (logicData.userInputWordLength > logicData.quoteWordLength) {
+            if (e.key === 'Backspace') {
+              dispatch(
+                setQuoteToType(
+                  remakeQuoteString(
+                    userTextInput,
+                    duplicateQuoteToType,
+                    quoteToType
+                  )
+                )
+              );
+              dispatch(
+                setExcessQuoteToType(
+                  excessQuoteToType.slice(0, excessQuoteToType.length - 1)
+                )
+              );
+              dispatch(
+                setUserTextInput(
+                  userTextInput.slice(0, userTextInput.length - 1)
+                )
+              );
+            }
+          } else {
+            if (e.key === 'Backspace') {
+              dispatch(
+                setUserTextInput(
+                  userTextInput.slice(0, userTextInput.length - 1)
+                )
+              );
+              dispatch(
+                setExcessQuoteToType(
+                  excessQuoteToType.slice(0, excessQuoteToType.length - 1)
+                )
+              );
+            }
+          }
+        }
+      } else {
+        // If the character is supposed to be a space and is a space, proceed as normal
+        dispatch(setUserTextInput(userTextInput.concat(e.key)));
+        dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));
+      }
+    } else {
+      if (e.key === 'Backspace') {
+        dispatch(
+          setUserTextInput(userTextInput.slice(0, userTextInput.length - 1))
+        );
+        dispatch(
+          setExcessQuoteToType(
+            excessQuoteToType.slice(0, excessQuoteToType.length - 1)
+          )
+        );
+      } else if (e.key === ' ') {
+        dispatch(setUserTextInput(userTextInput.concat('*')));
+        dispatch(setExcessQuoteToType(excessQuoteToType.concat('*')));
+      } else if (isValidChar(e.key)) {
+        dispatch(setUserTextInput(userTextInput.concat(e.key)));
+        dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));
+      }
+    }
+  }
 };
 
 export default InputForm;

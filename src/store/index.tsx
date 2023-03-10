@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
+import TypeInputSlice from './slices/TypeInputSlice';
 
 const store = configureStore({
-  reducer: {},
+  reducer: { typeInput: TypeInputSlice },
 });
 
 export default store;
