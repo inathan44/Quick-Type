@@ -1,13 +1,29 @@
 import React from 'react';
+import { useAppSelector } from '../store/hooks';
+import {
+  selectQuoteToType,
+  selectUserTextInput,
+  selectExcessQuoteToType,
+} from '../store/slices/TypeInputSlice';
 
-interface TypeBoxProps {
-  quoteToType: string;
-  userTextInput: string;
-  letterColor: (idx: number) => string;
-}
+const TypeBoxText = () => {
+  const quoteToType = useAppSelector(selectQuoteToType);
+  const userTextInput = useAppSelector(selectUserTextInput);
+  const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
 
-const TypeBoxText = (props: TypeBoxProps) => {
-  const { quoteToType, userTextInput, letterColor } = props;
+  const letterColor = (idx: number): string => {
+    if (idx > userTextInput.length - 1) return '#55848a';
+    else if (isExcessLetter(idx)) return '#f77795';
+    else {
+      return quoteToType[idx] === userTextInput[idx] ? 'white' : 'red';
+    }
+  };
+
+  function isExcessLetter(idx: number): boolean {
+    if (excessQuoteToType[idx] === '~') return true;
+    return false;
+  }
+
   return (
     <h2>
       {quoteToType.split('').map((char: string, idx: number) => (
