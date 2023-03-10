@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
+import AuthSlice from './slices/AuthSlice';
 import TypeInputSlice from './slices/TypeInputSlice';
 
 const store = configureStore({
-  reducer: { typeInput: TypeInputSlice },
-});
+  reducer: {
+    auth: AuthSlice,
+    typeInput: TypeInputSlice
+  },
+})
 
 export default store;
 
