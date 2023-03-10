@@ -24,7 +24,7 @@ interface InitTypeInputState {
 
 const initialState: InitTypeInputState = {
   // Quote to be typed that won't changed, used to compare to typed quote
-  duplicateQuoteToType: '',
+  duplicateQuoteToType: '<p>Hello world</p> <h1>I am the best</h1>',
   // Shows the quote and fills in excess letters and colors based on user input
   quoteToType: '<p>Hello world</p> <h1>I am the best</h1>',
   // Users input, what was typed
