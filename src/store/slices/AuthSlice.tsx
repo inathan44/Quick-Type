@@ -25,6 +25,10 @@ const AuthSlice = createSlice({
       state.loading = false;
       state.logged = true;
     });
+    builder.addCase(logInUser.rejected, (state, action) => {
+      state.loading = false;
+      state.logged = false;
+    });
   },
 });
 
