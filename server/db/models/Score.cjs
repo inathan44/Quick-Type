@@ -23,4 +23,5 @@ const Score = db.define('score', {
     allowNull: false,
   },
 });
+
 module.exports = Score;
