@@ -5,21 +5,26 @@ import {
   selectTimeElapsed,
   adjustTime,
   selectTimerActive,
+  selectTotalKeysPressed,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
   selectQuoteToType,
   selectUserTextInput,
+  selectDuplicateQuoteToType,
 } from '../store/slices/TypeInputSlice';
 
 const Timer = () => {
   const dispatch = useAppDispatch();
   const timeElapsed = useAppSelector(selectTimeElapsed);
   const timerActive = useAppSelector(selectTimerActive);
-  //   const [seconds, setSeconds] = useState(0);
-  const testComplete = useAppSelector(selectTestComplete);
   const quoteToType = useAppSelector(selectQuoteToType);
   const userTextInput = useAppSelector(selectUserTextInput);
+  const totalKeysPressed = useAppSelector(selectTotalKeysPressed);
+  const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
+
+  console.log('Raw WPM', totalKeysPressed / 5 / (timeElapsed / 60));
+  console.log('WPM', duplicateQuoteToType.length / 5 / (timeElapsed / 60));
 
   useEffect(() => {
     if (userTextInput.length > 0 && userTextInput.length < quoteToType.length) {

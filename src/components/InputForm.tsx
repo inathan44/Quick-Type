@@ -19,7 +19,7 @@ import {
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
 import Timer from './Timer';
-import { adjustTime } from '../store/slices/StatSlice';
+import { adjustTime, incrementKeysPressed } from '../store/slices/StatSlice';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
@@ -89,6 +89,9 @@ const InputForm = () => {
   // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+    if (lettersAvailable.includes(e.key)) {
+      dispatch(incrementKeysPressed());
+    }
     if (quoteToType.length === userTextInput.length) {
       return;
     }
