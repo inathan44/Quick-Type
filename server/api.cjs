@@ -10,6 +10,20 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+router.post('/login', async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    // console.log(username, password);
+    const token = await User.authenticate(username, password);
+    if (token) res.cookie('token', token).sendStatus(200);
+    err = new Error('Invalid username or password');
+    err.status = 401;
+    throw err;
+  } catch (err) {
+    err.status === 401 ? res.send(err) : next(err);
+  }
+});
+
 router.use((req, res, next) => {
   const err = new Error('API ROUTE NOT FOUND');
   err.status = 404;
