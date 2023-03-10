@@ -3,10 +3,12 @@ const app = express();
 const path = require('path');
 const dotenv = require('dotenv').config;
 const cors = require('cors');
+const cookieparser = require('cookie-parser');
 
 const PORT = 3030;
 app.use(express.json());
 app.use(cors());
+app.use(cookieparser());
 app.use('/api', require('./api.cjs'));
 app.use((err, req, res, next) => {
   console.error(err);
