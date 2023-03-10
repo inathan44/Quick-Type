@@ -8,12 +8,18 @@ import {
   selectLettersAvailable,
   setExcessQuoteToType,
   selectExcessQuoteToType,
+  setDuplicateQuoteToType,
   selectDuplicateQuoteToType,
   setUserTextInput,
   selectUserTextInput,
+  fetchAllQuotes,
+  selectAllQuotes,
+  QuoteFormat,
 } from '../store/slices/TypeInputSlice';
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
+import Timer from './Timer';
+import { adjustTime } from '../store/slices/StatSlice';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +29,7 @@ const InputForm = () => {
   const quoteToType: string = useAppSelector(selectQuoteToType);
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
+  const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
@@ -34,11 +41,25 @@ const InputForm = () => {
   }
 
   useEffect(() => {
+    dispatch(setUserTextInput(''));
+    dispatch(setQuoteToType(duplicateQuoteToType));
+    dispatch(setExcessQuoteToType(''));
+    dispatch(fetchAllQuotes());
+  }, []);
+
+  useEffect(() => {
+    const randomIdx = Math.floor(Math.random() * allQuotes.length);
+    dispatch(setQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
+    dispatch(setDuplicateQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
+  }, [allQuotes]);
+
+  useEffect(() => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
   }, [quoteToType, userTextInput]);
 
   return (
-    <div className="flex pt-44 flex-col items-center gap-4">
+    <div className="flex pt-44 flex-col items-center gap-4 text-white">
+      <Timer />
       <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
         Test Complete
       </h1>
@@ -56,6 +77,7 @@ const InputForm = () => {
           dispatch(setUserTextInput(''));
           dispatch(setQuoteToType(duplicateQuoteToType));
           dispatch(setExcessQuoteToType(''));
+          dispatch(adjustTime(0));
         }}
       >
         Reset Test
@@ -67,8 +89,11 @@ const InputForm = () => {
   // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
-    const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
+    if (quoteToType.length === userTextInput.length) {
+      return;
+    }
 
+    const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
     // If the character that we are typing is supposed to be a space
     if (nextCharIsSpace) {
       // If the character IS NOT a space, adjust the quote to reflect the mistyped extra letters
