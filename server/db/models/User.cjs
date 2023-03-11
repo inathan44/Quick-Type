@@ -79,9 +79,8 @@ User.authenticate = async function (username, password) {
       //   model: Score,
       // },
     });
-    console.log(user);
-    if (user && (await bcrypt.compare(password, this.password))) {
-      return jwt.sign(
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const token = await jwt.sign(
         {
           id: user.id,
           isAdmin: user.isAdmin,
@@ -90,6 +89,7 @@ User.authenticate = async function (username, password) {
         },
         process.env.JWT
       );
+      return token;
     } else {
       const error = new Error('invalid password');
       error.status = 401;
