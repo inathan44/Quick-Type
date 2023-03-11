@@ -56,25 +56,15 @@ export const fetchAllQuotes = createAsyncThunk(
   async (x, { rejectWithValue }) => {
     try {
       const { data } = await axios.get('https://type.fit/api/quotes');
+
       localStorage.setItem('hi', 'test');
+
       return data;
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
-
-// export const testApi = createAsyncThunk('test/testing', async () => {
-//   try {
-//     const { data } = await axios.get('http://localhost:5174/api');
-//     console.log('data', data);
-//     document.cookie = data;
-//     return data;
-//   } catch (error) {
-//     console.log('error!!!!!!');
-//     console.error(error);
-//   }
-// });
 
 const typeInputSlice = createSlice({
   name: 'typeInput',
@@ -116,9 +106,6 @@ const typeInputSlice = createSlice({
         state.error = action.error.message || 'Error when fetching quotes';
         state.loading = false;
       });
-    // .addCase(testApi.fulfilled, (state, action) => {
-    //   console.log('TEST API RUN');
-    // });
   },
 });
 
