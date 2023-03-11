@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectQuoteToType,
   selectUserTextInput,
@@ -7,14 +7,18 @@ import {
 } from '../store/slices/TypeInputSlice';
 
 const TypeBoxText = () => {
+  const dispatch = useAppDispatch();
+
   const quoteToType = useAppSelector(selectQuoteToType);
   const userTextInput = useAppSelector(selectUserTextInput);
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
 
   const letterColor = (idx: number): string => {
-    if (idx > userTextInput.length - 1) return '#55848a';
-    else if (isExcessLetter(idx)) return '#f77795';
-    else {
+    if (idx > userTextInput.length - 1) {
+      return '#55848a';
+    } else if (isExcessLetter(idx)) {
+      return '#f77795';
+    } else {
       return quoteToType[idx] === userTextInput[idx] ? 'white' : 'red';
     }
   };

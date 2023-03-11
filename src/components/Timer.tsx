@@ -23,12 +23,12 @@ const Timer = () => {
   const totalKeysPressed = useAppSelector(selectTotalKeysPressed);
   const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
 
-  console.log('Raw WPM', totalKeysPressed / 5 / (timeElapsed / 60));
-  console.log('WPM', duplicateQuoteToType.length / 5 / (timeElapsed / 60));
+  // console.log('Raw WPM', totalKeysPressed / 5 / (timeElapsed / 60));
+  // console.log('WPM', duplicateQuoteToType.length / 5 / (timeElapsed / 60));
+  // console.log('dup quote', quoteToType);
 
   useEffect(() => {
     if (userTextInput.length > 0 && userTextInput.length < quoteToType.length) {
-      console.log(timerActive);
       dispatch(toggleTimerActive(true));
     }
 

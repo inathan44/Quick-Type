@@ -19,7 +19,13 @@ import {
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
 import Timer from './Timer';
-import { adjustTime, incrementKeysPressed } from '../store/slices/StatSlice';
+import {
+  adjustTime,
+  incrementKeysPressed,
+  resetStats,
+  incrementIncorrectKeys,
+  selectIncorrectKeys,
+} from '../store/slices/StatSlice';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
@@ -29,10 +35,13 @@ const InputForm = () => {
   const quoteToType: string = useAppSelector(selectQuoteToType);
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
+  // console.log('user TI', userTextInput);
   const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
+  const incorrectKeys = useAppSelector(selectIncorrectKeys);
+  console.log('incorrect keys', incorrectKeys);
 
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
@@ -57,6 +66,24 @@ const InputForm = () => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
   }, [quoteToType, userTextInput]);
 
+  useEffect(() => {
+    console.log(
+      'Last char of user input',
+      userTextInput.charAt(userTextInput.length - 1)
+    );
+    console.log(
+      'last char of excess quote',
+      quoteToType.charAt(userTextInput.length - 1)
+    );
+
+    if (
+      userTextInput.charAt(userTextInput.length - 1) !==
+      quoteToType.charAt(userTextInput.length - 1)
+    ) {
+      dispatch(incrementIncorrectKeys());
+    }
+  }, [userTextInput, quoteToType]);
+
   return (
     <div className="flex pt-44 flex-col items-center gap-4 text-white">
       <Timer />
@@ -78,6 +105,7 @@ const InputForm = () => {
           dispatch(setQuoteToType(duplicateQuoteToType));
           dispatch(setExcessQuoteToType(''));
           dispatch(adjustTime(0));
+          dispatch(resetStats());
         }}
       >
         Reset Test
@@ -89,7 +117,13 @@ const InputForm = () => {
   // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
-    if (lettersAvailable.includes(e.key)) {
+    const logicData = deleteExcessLettersData(
+      userTextInput,
+      duplicateQuoteToType,
+      quoteToType
+    );
+
+    if (isValidChar(e.key)) {
       dispatch(incrementKeysPressed());
     }
     if (quoteToType.length === userTextInput.length) {
@@ -111,13 +145,11 @@ const InputForm = () => {
           );
           dispatch(setUserTextInput(userTextInput.concat(e.key)));
           dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
+
+          dispatch(incrementIncorrectKeys());
         } else if (e.key === 'Backspace') {
           // When Backspace is pressed but space SHOULD have been pressed
-          const logicData = deleteExcessLettersData(
-            userTextInput,
-            duplicateQuoteToType,
-            quoteToType
-          );
+
           if (logicData.userInputWordLength > logicData.quoteWordLength) {
             if (e.key === 'Backspace') {
               dispatch(
