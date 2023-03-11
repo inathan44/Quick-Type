@@ -2,24 +2,36 @@ const Sequelize = require('sequelize');
 const db = require('../database.cjs');
 
 const Score = db.define('score', {
-  WPM: {
-    type: Sequelize.INTEGER,
+  wpm: {
+    type: Sequelize.DECIMAL(10, 2),
     allowNull: false,
   },
-  type: {
+  testType: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  time: {
+  timeElapsed: {
+    type: Sequelize.DECIMAL(10, 1),
+    allowNull: false,
+  },
+  incorrectKeys: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  incorrectLetters: {
+  totalKeysPressed: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  lettersTyped: {
-    type: Sequelize.INTEGER,
+  language: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  accuracy: {
+    type: Sequelize.DECIMAL(3, 2),
+    allowNull: false,
+  },
+  raw: {
+    type: Sequelize.DECIMAL(10, 2),
     allowNull: false,
   },
 });
