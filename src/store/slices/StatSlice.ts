@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
+import axios from 'axios';
+import { Action } from '@remix-run/router';
 
 type TestType = 'words' | 'time';
 type Language = 'english' | 'html' | 'javascript';
@@ -31,6 +33,19 @@ const initialState: InitStatState = {
   previousStats: [],
 };
 
+export const addNewScore = createAsyncThunk(
+  'stat/addOne',
+  async (body, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post('localhost:3030/api/score', body);
+      console.log('axios post score data', data);
+      return data;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
 const StatSlice = createSlice({
   name: 'statSlice',
   initialState,
@@ -56,6 +71,11 @@ const StatSlice = createSlice({
     addScore(state, action: PayloadAction<Stat>) {
       state.previousStats.push(action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addNewScore.fulfilled, (state, action) => {
+      //
+    });
   },
 });
 
