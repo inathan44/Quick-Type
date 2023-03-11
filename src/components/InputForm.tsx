@@ -26,9 +26,6 @@ import {
   incrementIncorrectKeys,
   selectIncorrectKeys,
 } from '../store/slices/StatSlice';
-
-document.cookie = 'test=test';
-
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
