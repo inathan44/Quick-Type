@@ -1,11 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
 
+type TestType = 'words' | 'time';
+type Language = 'english' | 'html' | 'javascript';
+
+export interface Stat {
+  timeElapsed: number; //
+  totalKeysPressed: number; //
+  incorrectKeys: number; //
+  wpm: number; //
+  raw: number;
+  accuracy: number; //
+  testType: TestType; //
+  language: Language; //
+}
+
 interface InitStatState {
   timeElapsed: number;
   timerActive: boolean;
   totalKeysPressed: number;
   incorrectKeys: number;
+  previousStats: Stat[];
 }
 
 const initialState: InitStatState = {
@@ -13,6 +28,7 @@ const initialState: InitStatState = {
   timerActive: false,
   totalKeysPressed: 0,
   incorrectKeys: 0,
+  previousStats: [],
 };
 
 const StatSlice = createSlice({
@@ -23,7 +39,7 @@ const StatSlice = createSlice({
       state.timerActive = action.payload;
     },
     adjustTime(state, action: PayloadAction<number>): void {
-      state.timeElapsed = action.payload;
+      state.timeElapsed = +action.payload.toFixed(2);
     },
     incrementKeysPressed(state) {
       state.totalKeysPressed++;
@@ -37,6 +53,9 @@ const StatSlice = createSlice({
     incrementIncorrectKeys(state) {
       state.incorrectKeys++;
     },
+    addScore(state, action: PayloadAction<Stat>) {
+      state.previousStats.push(action.payload);
+    },
   },
 });
 
@@ -46,6 +65,7 @@ export const {
   incrementKeysPressed,
   resetStats,
   incrementIncorrectKeys,
+  addScore,
 } = StatSlice.actions;
 
 export const selectTimeElapsed = (state: RootState) =>

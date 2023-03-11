@@ -6,6 +6,8 @@ import {
   adjustTime,
   selectTimerActive,
   selectTotalKeysPressed,
+  selectIncorrectKeys,
+  addScore,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -22,10 +24,44 @@ const Timer = () => {
   const userTextInput = useAppSelector(selectUserTextInput);
   const totalKeysPressed = useAppSelector(selectTotalKeysPressed);
   const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
+  const incorrectKeys = useAppSelector(selectIncorrectKeys);
+  const testComplete = useAppSelector(selectTestComplete);
 
   // console.log('Raw WPM', totalKeysPressed / 5 / (timeElapsed / 60));
   // console.log('WPM', duplicateQuoteToType.length / 5 / (timeElapsed / 60));
+  // console.log('incorrect keys:', incorrectKeys);
+  // console.log('totalKeysPressed', totalKeysPressed);
+  // console.log(
+  //   'accuracy',
+  //   ((totalKeysPressed - incorrectKeys) / totalKeysPressed).toFixed(2)
+  // );
   // console.log('dup quote', quoteToType);
+
+  useEffect(() => {
+    const raw = totalKeysPressed / 5 / (timeElapsed / 60);
+    const wpm = +(duplicateQuoteToType.length / 5 / (timeElapsed / 60)).toFixed(
+      2
+    );
+    const accuracy = +(
+      (totalKeysPressed - incorrectKeys) /
+      totalKeysPressed
+    ).toFixed(2);
+
+    if (testComplete && userTextInput.length !== 0) {
+      dispatch(
+        addScore({
+          timeElapsed,
+          totalKeysPressed,
+          incorrectKeys,
+          wpm,
+          raw,
+          accuracy,
+          language: 'english',
+          testType: 'words',
+        })
+      );
+    }
+  }, [testComplete]);
 
   useEffect(() => {
     if (userTextInput.length > 0 && userTextInput.length < quoteToType.length) {
@@ -41,8 +77,8 @@ const Timer = () => {
     let interval: any = null;
     if (timerActive) {
       interval = setInterval(() => {
-        dispatch(adjustTime(timeElapsed + 1));
-      }, 1000);
+        dispatch(adjustTime(timeElapsed + 0.1));
+      }, 100);
     } else if (!timerActive && timeElapsed !== 0) {
       clearInterval(interval);
     }

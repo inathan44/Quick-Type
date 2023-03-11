@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectTestComplete,
@@ -25,12 +25,15 @@ import {
   resetStats,
   incrementIncorrectKeys,
   selectIncorrectKeys,
+  addScore,
 } from '../store/slices/StatSlice';
 
 document.cookie = 'test=test';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
+
+  const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const lettersAvailable: string = useAppSelector(selectLettersAvailable);
@@ -43,7 +46,6 @@ const InputForm = () => {
     selectDuplicateQuoteToType
   );
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
-  // console.log('incorrect keys', incorrectKeys);
 
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
@@ -71,7 +73,8 @@ const InputForm = () => {
   useEffect(() => {
     if (
       userTextInput.charAt(userTextInput.length - 1) !==
-      quoteToType.charAt(userTextInput.length - 1)
+        quoteToType.charAt(userTextInput.length - 1) &&
+      lastKeyPressed !== 'Backspace'
     ) {
       dispatch(incrementIncorrectKeys());
     }
@@ -110,6 +113,7 @@ const InputForm = () => {
   // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+    setLastKeyPressed(e.key);
     const logicData = deleteExcessLettersData(
       userTextInput,
       duplicateQuoteToType,
@@ -138,7 +142,6 @@ const InputForm = () => {
           );
           dispatch(setUserTextInput(userTextInput.concat(e.key)));
           dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
-
           dispatch(incrementIncorrectKeys());
         } else if (e.key === 'Backspace') {
           // When Backspace is pressed but space SHOULD have been pressed
@@ -203,6 +206,16 @@ const InputForm = () => {
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));
       }
     }
+    // console.log('userInput', userTextInput);
+    // console.log('user last char', userTextInput[userTextInput.length - 1]);
+    // console.log('quote last char', quoteToType[userTextInput.length - 1]);
+    // if (
+    //   userTextInput[userTextInput.length - 1] !==
+    //     quoteToType[userTextInput.length - 1] &&
+    //   e.key !== 'Backspace'
+    // ) {
+    //   dispatch(incrementIncorrectKeys());
+    // }
   }
 };
 
