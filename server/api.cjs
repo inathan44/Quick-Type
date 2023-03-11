@@ -23,7 +23,8 @@ router.post('/login', async (req, res, next) => {
     const token = await User.authenticate(username, password);
     // console.log(token);
     // if (token) {
-    return res.status(200).send({ token });
+    res.cookie('token', token);
+    res.end();
     // res.end();
     // } else {
     //   err = new Error('Invalid username or password');
