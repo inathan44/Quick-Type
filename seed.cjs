@@ -1,8 +1,10 @@
-const { User, Score, db } = require('./server/db/index.cjs');
+const db = require('./server/db/database.cjs');
+const { User, Score } = require('./server/db/index.cjs');
 
 const seed = async () => {
   try {
     await db.sync();
+    console.log('seeeeeeding the Database <><><>><><><><><><><><><>');
     await User.create({
       username: 'EasyName',
       email: 'mother@gmail.com',
@@ -20,6 +22,7 @@ const seed = async () => {
   } catch (err) {
     console.error(err);
     console.log('Seeding failed');
+    db.close();
   }
 };
 seed();
