@@ -10,15 +10,26 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+// router.get('/', async (req, res, next) => {
+//   res.cookie('token', 'hello');
+//   res.json('hi');
+// });
+
 router.post('/login', async (req, res, next) => {
   try {
+    // console.log(req);
     const { username, password } = req.body;
     // console.log(username, password);
     const token = await User.authenticate(username, password);
-    if (token) res.cookie('token', token).sendStatus(200);
-    err = new Error('Invalid username or password');
-    err.status = 401;
-    throw err;
+    // console.log(token);
+    // if (token) {
+    return res.status(200).send({ token });
+    // res.end();
+    // } else {
+    //   err = new Error('Invalid username or password');
+    //   err.status = 401;
+    //   throw err;
+    // }
   } catch (err) {
     err.status === 401 ? res.send(err) : next(err);
   }
