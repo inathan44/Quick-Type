@@ -5,10 +5,14 @@ const dotenv = require('dotenv').config;
 const cors = require('cors');
 const cookieparser = require('cookie-parser');
 
-const PORT = 3030;
+const PORT = 8200;
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieparser());
+// app.use('*', (req, res, next) => {
+//   res.sendFile(path.join(__dirname, '../index.html'));
+// });
 app.use('/api', require('./api.cjs'));
 app.use((err, req, res, next) => {
   console.error(err);
