@@ -56,6 +56,7 @@ export const fetchAllQuotes = createAsyncThunk(
   async (x, { rejectWithValue }) => {
     try {
       const { data } = await axios.get('https://type.fit/api/quotes');
+      localStorage.setItem('hi', 'test');
       return data;
     } catch (error) {
       return rejectWithValue(error);
