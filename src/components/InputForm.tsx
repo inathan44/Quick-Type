@@ -27,6 +27,8 @@ import {
   selectIncorrectKeys,
 } from '../store/slices/StatSlice';
 
+document.cookie = 'test=test';
+
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
@@ -41,7 +43,7 @@ const InputForm = () => {
     selectDuplicateQuoteToType
   );
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
-  console.log('incorrect keys', incorrectKeys);
+  // console.log('incorrect keys', incorrectKeys);
 
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
@@ -67,15 +69,6 @@ const InputForm = () => {
   }, [quoteToType, userTextInput]);
 
   useEffect(() => {
-    console.log(
-      'Last char of user input',
-      userTextInput.charAt(userTextInput.length - 1)
-    );
-    console.log(
-      'last char of excess quote',
-      quoteToType.charAt(userTextInput.length - 1)
-    );
-
     if (
       userTextInput.charAt(userTextInput.length - 1) !==
       quoteToType.charAt(userTextInput.length - 1)

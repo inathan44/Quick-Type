@@ -63,6 +63,18 @@ export const fetchAllQuotes = createAsyncThunk(
   }
 );
 
+// export const testApi = createAsyncThunk('test/testing', async () => {
+//   try {
+//     const { data } = await axios.get('http://localhost:5174/api');
+//     console.log('data', data);
+//     document.cookie = data;
+//     return data;
+//   } catch (error) {
+//     console.log('error!!!!!!');
+//     console.error(error);
+//   }
+// });
+
 const typeInputSlice = createSlice({
   name: 'typeInput',
   initialState,
@@ -103,6 +115,9 @@ const typeInputSlice = createSlice({
         state.error = action.error.message || 'Error when fetching quotes';
         state.loading = false;
       });
+    // .addCase(testApi.fulfilled, (state, action) => {
+    //   console.log('TEST API RUN');
+    // });
   },
 });
 
