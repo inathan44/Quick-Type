@@ -44,7 +44,7 @@ const initialState: InitTypeInputState = {
   testComplete: false,
   // The letters available to be typed, only these will show up on screen
   lettersAvailable:
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789-_';:?",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789-_';:?!",
   // Array of objects that hold quotes
   allQuotes: [],
   loading: false,
@@ -91,6 +91,11 @@ const typeInputSlice = createSlice({
     setUserTextInput(state: InitTypeInputState, action: PayloadAction<string>) {
       state.userTextInput = action.payload;
     },
+    resetUserInput(state: InitTypeInputState) {
+      state.userTextInput = '';
+      state.excessQuoteToType = '';
+      state.quoteToType = state.duplicateQuoteToType;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -115,6 +120,7 @@ export const {
   setExcessQuoteToType,
   setDuplicateQuoteToType,
   setUserTextInput,
+  resetUserInput,
 } = typeInputSlice.actions;
 
 export const selectTestComplete = (state: RootState) =>
