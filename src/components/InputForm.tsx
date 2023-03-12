@@ -137,7 +137,7 @@ const InputForm = () => {
     }
 
     if (useCountdown && countdownTimer <= 0) {
-      console.log('testComplete', testComplete);
+      // console.log('testComplete', testComplete);
       return;
     }
     if (isValidChar(e.key)) {

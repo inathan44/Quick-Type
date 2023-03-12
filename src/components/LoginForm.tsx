@@ -1,24 +1,27 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logInUser, authorizeToken } from '../store/slices/AuthSlice';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    dispatch(
+    await dispatch(
       logInUser({
         username,
         password,
       })
     );
-    dispatch(authorizeToken());
+    await dispatch(authorizeToken());
     setUsername('');
     setPassword('');
+    navigate('/');
   };
 
   return (

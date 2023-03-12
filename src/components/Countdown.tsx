@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { authorizeToken } from '../store/slices/AuthSlice';
+import { dataState } from '../store/slices/AuthSlice';
 import {
   toggleTimerActive,
   selectTimeElapsed,
@@ -27,6 +29,7 @@ const Timer = () => {
 
   const [timeRemaining, setTimeRemaining] = useState(15);
 
+  const userData = useAppSelector(dataState);
   const timeElapsed = useAppSelector(selectTimeElapsed);
   const timerActive = useAppSelector(selectTimerActive);
   const quoteToType = useAppSelector(selectQuoteToType);
@@ -54,32 +57,39 @@ const Timer = () => {
     // Dispatch adding the score to the datbase once test is complete (clock hits 0),
     // user has typed at least once and we are on countdown mode
     if (testComplete && userTextInput.length !== 0 && useCountdown) {
-      dispatch(
-        addScore({
-          timeElapsed: startingTime,
-          totalKeysPressed,
-          incorrectKeys,
-          wpm,
-          raw,
-          accuracy,
-          language: 'english',
-          testType: 'time',
-        })
-      );
-      dispatch(
-        addNewScore({
-          timeElapsed: startingTime,
-          totalKeysPressed,
-          incorrectKeys,
-          wpm,
-          raw,
-          accuracy,
-          language: 'english',
-          testType: 'time',
-          userId: 1,
-        })
-      );
+      async function dispatchData() {
+        if (userData) {
+          await dispatch(
+            addNewScore({
+              timeElapsed: startingTime,
+              totalKeysPressed,
+              incorrectKeys,
+              wpm,
+              raw,
+              accuracy,
+              language: 'english',
+              testType: 'time',
+              userId: userData.id,
+            })
+          );
+        } else {
+          dispatch(
+            addNewScore({
+              timeElapsed: startingTime,
+              totalKeysPressed,
+              incorrectKeys,
+              wpm,
+              raw,
+              accuracy,
+              language: 'english',
+              testType: 'time',
+            })
+          );
+        }
+      }
+      dispatchData();
     }
+    dispatch(authorizeToken());
   }, [testComplete]);
 
   useEffect(() => {
