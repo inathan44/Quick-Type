@@ -6,7 +6,6 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-
     setUsername('');
     setPassword('');
   };
