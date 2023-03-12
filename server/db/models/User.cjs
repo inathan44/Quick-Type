@@ -61,7 +61,11 @@ User.prototype.createToken = async function (user) {
 User.findByToken = async function (token) {
   try {
     const { id } = await jwt.verify(token, process.env.JWT);
-    const user = User.findByPk(id);
+    const user = await User.findByPk(id, {
+      attributes: {
+        exclude: ['password'],
+      },
+    });
     return user;
   } catch (err) {
     const error = Error('bad token');
