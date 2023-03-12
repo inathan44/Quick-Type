@@ -26,7 +26,10 @@ import {
   incrementIncorrectKeys,
   selectIncorrectKeys,
   addScore,
+  selectUseCountdown,
+  selectCountdownTimer,
 } from '../store/slices/StatSlice';
+import Countdown from './Countdown';
 
 document.cookie = 'test=test';
 
@@ -34,19 +37,20 @@ const InputForm = () => {
   const dispatch = useAppDispatch();
 
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
-  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(0);
+  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(25);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
+  const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
   const lettersAvailable: string = useAppSelector(selectLettersAvailable);
   const quoteToType: string = useAppSelector(selectQuoteToType);
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
-  // console.log('user TI', userTextInput);
-  const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
+  const countdownTimer = useAppSelector(selectCountdownTimer);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
+  const useCountdown = useAppSelector(selectUseCountdown);
 
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
@@ -66,7 +70,7 @@ const InputForm = () => {
     dispatch(
       setDuplicateQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading')
     );
-  }, [allQuotes]);
+  }, [allQuotes, randomQuoteIndex]);
 
   useEffect(() => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
@@ -84,7 +88,7 @@ const InputForm = () => {
 
   return (
     <div className="flex pt-44 flex-col items-center gap-4 text-white">
-      <Timer />
+      {useCountdown ? <Countdown /> : <Timer />}
       <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
         Test Complete
       </h1>
@@ -123,11 +127,16 @@ const InputForm = () => {
       quoteToType
     );
 
-    if (isValidChar(e.key)) {
-      dispatch(incrementKeysPressed());
-    }
     if (quoteToType.length === userTextInput.length) {
       return;
+    }
+
+    if (useCountdown && countdownTimer <= 0) {
+      console.log('testComplete', testComplete);
+      return;
+    }
+    if (isValidChar(e.key)) {
+      dispatch(incrementKeysPressed());
     }
 
     const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';

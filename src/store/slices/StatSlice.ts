@@ -25,6 +25,7 @@ interface InitStatState {
   totalKeysPressed: number;
   incorrectKeys: number;
   previousStats: Stat[];
+  startingTime: number;
   countdownTimer: number;
   useCountdown: boolean;
 }
@@ -35,8 +36,9 @@ const initialState: InitStatState = {
   totalKeysPressed: 0,
   incorrectKeys: 0,
   previousStats: [],
-  countdownTimer: 15,
-  useCountdown: false,
+  countdownTimer: 5,
+  startingTime: 5,
+  useCountdown: true,
 };
 
 export const addNewScore = createAsyncThunk(
@@ -65,6 +67,9 @@ const StatSlice = createSlice({
     adjustTime(state, action: PayloadAction<number>): void {
       state.timeElapsed = +action.payload.toFixed(2);
     },
+    adjustCountdown(state, action: PayloadAction<number>): void {
+      state.countdownTimer = +action.payload.toFixed(2);
+    },
     incrementKeysPressed(state) {
       state.totalKeysPressed++;
     },
@@ -73,6 +78,7 @@ const StatSlice = createSlice({
       state.timerActive = false;
       state.timeElapsed = 0;
       state.incorrectKeys = 0;
+      state.countdownTimer = state.startingTime;
     },
     incrementIncorrectKeys(state) {
       state.incorrectKeys++;
@@ -99,6 +105,7 @@ export const {
   resetStats,
   incrementIncorrectKeys,
   addScore,
+  adjustCountdown,
 } = StatSlice.actions;
 
 export const selectTimeElapsed = (state: RootState) =>
@@ -113,5 +120,7 @@ export const selectCountdownTimer = (state: RootState) =>
   state.statSlice.countdownTimer;
 export const selectUseCountdown = (state: RootState) =>
   state.statSlice.useCountdown;
+export const selectStartingTime = (state: RootState) =>
+  state.statSlice.startingTime;
 
 export default StatSlice.reducer;
