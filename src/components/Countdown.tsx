@@ -111,11 +111,7 @@ const Timer = () => {
     }
   }, [countdownTimer, timerActive]);
 
-  return (
-    <div>
-      <p>{countdownTimer}</p>
-    </div>
-  );
+  return <div>{/* <p>{countdownTimer}</p> */}</div>;
 };
 
 export default Timer;

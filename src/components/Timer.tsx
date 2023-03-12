@@ -93,11 +93,7 @@ const Timer = () => {
     return () => clearInterval(interval);
   }, [timerActive, timeElapsed]);
 
-  return (
-    <div>
-      <p>{timeElapsed}</p>
-    </div>
-  );
+  return <div>{/* <p>{timeElapsed}</p> */}</div>;
 };
 
 export default Timer;
