@@ -13,7 +13,7 @@ const NavBar = () => {
           <div className="flex items-center gap-4">
             <img src={keyboardIcon} alt="Keyboard icon" />
             <h1 className="text-4xl text-white font-bold tracking-wide">
-              QuickType
+              QuickType<span className="text-sm text-gray-400">(beta)</span>
             </h1>
           </div>
         </Link>
