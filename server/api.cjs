@@ -11,6 +11,10 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
+router.get('/auth', requireTokenAuth, async (req, res, next) => {
+  res.send(req.user);
+});
+
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
