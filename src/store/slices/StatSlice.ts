@@ -38,7 +38,7 @@ const initialState: InitStatState = {
   previousStats: [],
   countdownTimer: 5,
   startingTime: 15,
-  useCountdown: true,
+  useCountdown: false,
 };
 
 export const addNewScore = createAsyncThunk(
@@ -49,7 +49,7 @@ export const addNewScore = createAsyncThunk(
         'http://localhost:3030/api/score',
         body
       );
-      console.log('axios post score data', data);
+      // console.log('axios post score data', data);
       return data;
     } catch (e) {
       return rejectWithValue(e);
