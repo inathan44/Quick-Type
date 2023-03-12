@@ -47,7 +47,7 @@ const TestStatHeader = () => {
           ).toFixed(2)
         );
       }
-      console.log('is int?:', Number.isInteger(countdownTimer));
+      // console.log('is int?:', Number.isInteger(countdownTimer));
     } else {
       if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
         setWpm(
@@ -58,7 +58,7 @@ const TestStatHeader = () => {
           ).toFixed(2)
         );
       }
-      console.log('is int?:', Number.isInteger(timeElapsed));
+      // console.log('is int?:', Number.isInteger(timeElapsed));
     }
   }, [timeElapsed, countdownTimer]);
 
