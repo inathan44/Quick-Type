@@ -65,12 +65,25 @@ User.findByToken = async function (token) {
       attributes: {
         exclude: ['password'],
       },
+      include: {
+        model: Score,
+      },
     });
     return user;
   } catch (err) {
     const error = Error('bad token');
     error.status = 401;
     throw error;
+  }
+};
+
+User.verifyToken = async function (token) {
+  try {
+    if (await jwt.verify(token, process.env.JWT).id) {
+      return true;
+    }
+  } catch (err) {
+    return false;
   }
 };
 
