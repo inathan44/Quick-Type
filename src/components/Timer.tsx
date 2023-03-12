@@ -9,6 +9,7 @@ import {
   selectIncorrectKeys,
   addScore,
   addNewScore,
+  selectUseCountdown,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -27,6 +28,7 @@ const Timer = () => {
   const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
+  const useCountdown = useAppSelector(selectUseCountdown);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
@@ -38,7 +40,9 @@ const Timer = () => {
       totalKeysPressed
     ).toFixed(2);
 
-    if (testComplete && userTextInput.length !== 0) {
+    // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
+    // user has typed at least once and we are on countdown mode
+    if (testComplete && userTextInput.length !== 0 && !useCountdown) {
       dispatch(
         addScore({
           timeElapsed,
@@ -75,7 +79,7 @@ const Timer = () => {
     return () => {
       dispatch(toggleTimerActive(false));
     };
-  }, [userTextInput, quoteToType]);
+  }, [userTextInput, quoteToType, useCountdown]);
 
   useEffect(() => {
     let interval: any = null;
