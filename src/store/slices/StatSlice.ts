@@ -37,7 +37,7 @@ const initialState: InitStatState = {
   incorrectKeys: 0,
   previousStats: [],
   countdownTimer: 5,
-  startingTime: 5,
+  startingTime: 15,
   useCountdown: true,
 };
 
