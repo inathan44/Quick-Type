@@ -6,7 +6,6 @@ import {
   selectTimerActive,
   selectTotalKeysPressed,
   selectIncorrectKeys,
-  addScore,
   addNewScore,
   selectUseCountdown,
   selectCountdownTimer,
@@ -36,6 +35,9 @@ const TestStatHeader = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
 
+  console.log('startingTime', startingTime);
+  console.log('countdownTimer', countdownTimer);
+
   useEffect(() => {
     if (useCountdown) {
       if (Number.isInteger(countdownTimer)) {
@@ -43,8 +45,8 @@ const TestStatHeader = () => {
           +(
             (totalKeysPressed - incorrectKeys) /
             5 /
-            (startingTime / 60)
-          ).toFixed(2)
+            ((startingTime - countdownTimer) / 60)
+          ).toFixed(2) || 0
         );
       }
       console.log('is int?:', Number.isInteger(countdownTimer));
@@ -61,11 +63,6 @@ const TestStatHeader = () => {
       console.log('is int?:', Number.isInteger(timeElapsed));
     }
   }, [timeElapsed, countdownTimer]);
-
-  //   const wpm = useCountdown
-  //     ? +((totalKeysPressed - incorrectKeys) / 5 / (startingTime / 60)).toFixed(2)
-  //     : +(duplicateQuoteToType.length / 5 / (timeElapsed / 60)).toFixed(2);
-  //   console.log('wpm', wpm);
 
   return (
     <div className="flex justify-center text-white gap-16 items-center">
