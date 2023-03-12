@@ -7,7 +7,6 @@ import {
   selectTimerActive,
   selectTotalKeysPressed,
   selectIncorrectKeys,
-  addScore,
   addNewScore,
   selectCountdownTimer,
   adjustCountdown,
@@ -55,18 +54,6 @@ const Timer = () => {
     // user has typed at least once and we are on countdown mode
     if (testComplete && userTextInput.length !== 0 && useCountdown) {
       dispatch(
-        addScore({
-          timeElapsed: startingTime,
-          totalKeysPressed,
-          incorrectKeys,
-          wpm,
-          raw,
-          accuracy,
-          language: 'english',
-          testType: 'time',
-        })
-      );
-      dispatch(
         addNewScore({
           timeElapsed: startingTime,
           totalKeysPressed,
@@ -74,7 +61,7 @@ const Timer = () => {
           wpm,
           raw,
           accuracy,
-          language: 'english',
+          language: 'English',
           testType: 'time',
           userId: 1,
         })
