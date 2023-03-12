@@ -6,13 +6,11 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const { data } = await axios.post('http://localhost:8200/api/login', {
+    const { data } = await axios.post('http://localhost:3030/api/login', {
       username,
       password,
     });
-    console.log(data.token);
-    localStorage.setItem('login', 'test');
-    console.log('testestest');
+    localStorage.setItem('login', data);
     setUsername('');
     setPassword('');
   };

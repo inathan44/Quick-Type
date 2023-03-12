@@ -1,18 +1,12 @@
 const express = require('express');
 const app = express();
-const path = require('path');
 const dotenv = require('dotenv').config;
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 
-const PORT = 8200;
+const PORT = 3030;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(cookieParser());
-// app.use('*', (req, res, next) => {
-//   res.sendFile(path.join(__dirname, '../index.html'));
-// });
 app.use('/api', require('./api.cjs'));
 app.use((err, req, res, next) => {
   console.error(err);
