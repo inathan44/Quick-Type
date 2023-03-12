@@ -15,6 +15,15 @@ router.get('/auth', requireTokenAuth, async (req, res, next) => {
   res.send(req.user);
 });
 
+router.get('/verify/:token', async (req, res, next) => {
+  const token = req.params.token;
+  if (User.verifyToken(token)) {
+    res.send(true);
+  } else {
+    res.send(false);
+  }
+});
+
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -34,7 +43,7 @@ router.post('/login', async (req, res, next) => {
 router.post('/score', async (req, res, next) => {
   try {
     const newScore = await Score.create(req.body);
-    console.log('newScore', newScore);
+    // console.log('newScore', newScore);
     res.send(newScore);
   } catch (err) {
     console.error(err);
