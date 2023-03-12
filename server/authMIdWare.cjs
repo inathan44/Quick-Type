@@ -2,7 +2,12 @@ const { User } = require('./db/index.cjs');
 
 const requireTokenAuth = async (req, res, next) => {
   try {
-    console.log(req.locals.token);
+    const token = req.headers.token;
+    if (!token) {
+      return res.status(403).send('User is not logged in');
+    }
+    const user = await User.findByToken(token);
+    req.user = user;
     next();
   } catch (err) {
     next(err);
