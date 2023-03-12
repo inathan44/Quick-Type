@@ -3,9 +3,10 @@ import { RootState } from '..';
 import axios from 'axios';
 import { Action } from '@remix-run/router';
 import { Root } from 'react-dom/client';
+import { Mode } from '../../components/OptionsMenu';
 
 type TestType = 'words' | 'time';
-type Language = 'english' | 'html' | 'javascript';
+type Language = 'English' | 'HTML' | 'JavaScript';
 
 export interface Stat {
   timeElapsed: number;
@@ -24,10 +25,12 @@ interface InitStatState {
   timerActive: boolean;
   totalKeysPressed: number;
   incorrectKeys: number;
-  previousStats: Stat[];
   startingTime: number;
   countdownTimer: number;
   useCountdown: boolean;
+  wordNumber: number;
+  language: Language;
+  lastTest?: Stat;
 }
 
 const initialState: InitStatState = {
@@ -35,10 +38,11 @@ const initialState: InitStatState = {
   timerActive: false,
   totalKeysPressed: 0,
   incorrectKeys: 0,
-  previousStats: [],
-  countdownTimer: 5,
-  startingTime: 15,
-  useCountdown: true,
+  countdownTimer: 30,
+  startingTime: 30,
+  useCountdown: false,
+  wordNumber: 20,
+  language: 'English',
 };
 
 export const addNewScore = createAsyncThunk(
@@ -83,14 +87,29 @@ const StatSlice = createSlice({
     incrementIncorrectKeys(state) {
       state.incorrectKeys++;
     },
-    addScore(state, action: PayloadAction<Stat>) {
-      state.previousStats.push(action.payload);
+    setTestTime(state, action: PayloadAction<number>) {
+      state.countdownTimer = action.payload;
+      state.startingTime = action.payload;
+    },
+    setTestWords(state, action: PayloadAction<number>) {
+      state.wordNumber = action.payload;
+    },
+    changeTestLangauge(state, action: PayloadAction<Language>) {
+      state.language = action.payload;
+    },
+    changeMode(state, action: PayloadAction<Mode>) {
+      // Switch between typing # of words and typing until time runs out
+      if (action.payload === 'Time') {
+        state.useCountdown = true;
+      } else if (action.payload === 'Words') {
+        state.useCountdown = false;
+      }
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(addNewScore.fulfilled, (state, action) => {
-        state.previousStats.push(action.payload);
+        state.lastTest = action.payload;
       })
       .addCase(addNewScore.rejected, (state, action) => {
         console.log(action.error.message);
@@ -104,8 +123,11 @@ export const {
   incrementKeysPressed,
   resetStats,
   incrementIncorrectKeys,
-  addScore,
   adjustCountdown,
+  changeMode,
+  setTestTime,
+  setTestWords,
+  changeTestLangauge,
 } = StatSlice.actions;
 
 export const selectTimeElapsed = (state: RootState) =>
