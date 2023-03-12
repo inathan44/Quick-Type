@@ -34,6 +34,7 @@ const InputForm = () => {
   const dispatch = useAppDispatch();
 
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
+  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(0);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const lettersAvailable: string = useAppSelector(selectLettersAvailable);
@@ -61,9 +62,10 @@ const InputForm = () => {
   }, []);
 
   useEffect(() => {
-    const randomIdx = Math.floor(Math.random() * allQuotes.length);
-    dispatch(setQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
-    dispatch(setDuplicateQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
+    dispatch(setQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading'));
+    dispatch(
+      setDuplicateQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading')
+    );
   }, [allQuotes]);
 
   useEffect(() => {
@@ -102,6 +104,7 @@ const InputForm = () => {
           dispatch(setExcessQuoteToType(''));
           dispatch(adjustTime(0));
           dispatch(resetStats());
+          setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
         }}
       >
         Reset Test
@@ -206,16 +209,6 @@ const InputForm = () => {
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));
       }
     }
-    // console.log('userInput', userTextInput);
-    // console.log('user last char', userTextInput[userTextInput.length - 1]);
-    // console.log('quote last char', quoteToType[userTextInput.length - 1]);
-    // if (
-    //   userTextInput[userTextInput.length - 1] !==
-    //     quoteToType[userTextInput.length - 1] &&
-    //   e.key !== 'Backspace'
-    // ) {
-    //   dispatch(incrementIncorrectKeys());
-    // }
   }
 };
 

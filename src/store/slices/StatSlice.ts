@@ -2,19 +2,21 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
 import axios from 'axios';
 import { Action } from '@remix-run/router';
+import { Root } from 'react-dom/client';
 
 type TestType = 'words' | 'time';
 type Language = 'english' | 'html' | 'javascript';
 
 export interface Stat {
-  timeElapsed: number; //
-  totalKeysPressed: number; //
-  incorrectKeys: number; //
-  wpm: number; //
+  timeElapsed: number;
+  totalKeysPressed: number;
+  incorrectKeys: number;
+  wpm: number;
   raw: number;
-  accuracy: number; //
-  testType: TestType; //
-  language: Language; //
+  accuracy: number;
+  testType: TestType;
+  language: Language;
+  userId?: number;
 }
 
 interface InitStatState {
@@ -23,6 +25,8 @@ interface InitStatState {
   totalKeysPressed: number;
   incorrectKeys: number;
   previousStats: Stat[];
+  countdownTimer: number;
+  useCountdown: boolean;
 }
 
 const initialState: InitStatState = {
@@ -31,13 +35,18 @@ const initialState: InitStatState = {
   totalKeysPressed: 0,
   incorrectKeys: 0,
   previousStats: [],
+  countdownTimer: 15,
+  useCountdown: false,
 };
 
 export const addNewScore = createAsyncThunk(
   'stat/addOne',
-  async (body, { rejectWithValue }) => {
+  async (body: Stat, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post('localhost:3030/api/score', body);
+      const { data } = await axios.post(
+        'http://localhost:3030/api/score',
+        body
+      );
       console.log('axios post score data', data);
       return data;
     } catch (e) {
@@ -73,9 +82,13 @@ const StatSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(addNewScore.fulfilled, (state, action) => {
-      //
-    });
+    builder
+      .addCase(addNewScore.fulfilled, (state, action) => {
+        state.previousStats.push(action.payload);
+      })
+      .addCase(addNewScore.rejected, (state, action) => {
+        console.log(action.error.message);
+      });
   },
 });
 
@@ -96,5 +109,9 @@ export const selectTotalKeysPressed = (state: RootState) =>
   state.statSlice.totalKeysPressed;
 export const selectIncorrectKeys = (state: RootState) =>
   state.statSlice.incorrectKeys;
+export const selectCountdownTimer = (state: RootState) =>
+  state.statSlice.countdownTimer;
+export const selectUseCountdown = (state: RootState) =>
+  state.statSlice.useCountdown;
 
 export default StatSlice.reducer;

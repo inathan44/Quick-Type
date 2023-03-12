@@ -8,6 +8,7 @@ import {
   selectTotalKeysPressed,
   selectIncorrectKeys,
   addScore,
+  addNewScore,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -26,16 +27,6 @@ const Timer = () => {
   const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
-
-  // console.log('Raw WPM', totalKeysPressed / 5 / (timeElapsed / 60));
-  // console.log('WPM', duplicateQuoteToType.length / 5 / (timeElapsed / 60));
-  // console.log('incorrect keys:', incorrectKeys);
-  // console.log('totalKeysPressed', totalKeysPressed);
-  // console.log(
-  //   'accuracy',
-  //   ((totalKeysPressed - incorrectKeys) / totalKeysPressed).toFixed(2)
-  // );
-  // console.log('dup quote', quoteToType);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
@@ -58,6 +49,19 @@ const Timer = () => {
           accuracy,
           language: 'english',
           testType: 'words',
+        })
+      );
+      dispatch(
+        addNewScore({
+          timeElapsed,
+          totalKeysPressed,
+          incorrectKeys,
+          wpm,
+          raw,
+          accuracy,
+          language: 'english',
+          testType: 'words',
+          userId: 1,
         })
       );
     }
