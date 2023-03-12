@@ -14,6 +14,7 @@ router.post('/signup', async (req, res, next) => {
 router.post('/score', async (req, res, next) => {
   try {
     const newScore = await Score.create(req.body);
+    console.log('newScore', newScore);
     res.send(newScore);
   } catch (err) {
     console.err(err);
