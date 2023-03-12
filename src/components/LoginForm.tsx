@@ -1,11 +1,22 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logInUser, authorizeToken } from '../store/slices/AuthSlice';
 import axios from 'axios';
 
 const LoginForm = () => {
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    dispatch(
+      logInUser({
+        username,
+        password,
+      })
+    );
+    dispatch(authorizeToken());
     setUsername('');
     setPassword('');
   };
