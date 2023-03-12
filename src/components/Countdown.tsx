@@ -9,17 +9,24 @@ import {
   selectIncorrectKeys,
   addScore,
   addNewScore,
+  selectCountdownTimer,
+  adjustCountdown,
   selectUseCountdown,
+  selectStartingTime,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
   selectQuoteToType,
   selectUserTextInput,
   selectDuplicateQuoteToType,
+  setTestComplete,
 } from '../store/slices/TypeInputSlice';
 
 const Timer = () => {
   const dispatch = useAppDispatch();
+
+  const [timeRemaining, setTimeRemaining] = useState(15);
+
   const timeElapsed = useAppSelector(selectTimeElapsed);
   const timerActive = useAppSelector(selectTimerActive);
   const quoteToType = useAppSelector(selectQuoteToType);
@@ -28,43 +35,47 @@ const Timer = () => {
   const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
+  const countdownTimer = useAppSelector(selectCountdownTimer);
   const useCountdown = useAppSelector(selectUseCountdown);
+  const startingTime = useAppSelector(selectStartingTime);
 
   useEffect(() => {
-    const raw = totalKeysPressed / 5 / (timeElapsed / 60);
-    const wpm = +(duplicateQuoteToType.length / 5 / (timeElapsed / 60)).toFixed(
-      2
-    );
+    const raw = totalKeysPressed / 5 / (startingTime / 60);
+    const wpm = +(
+      (totalKeysPressed - incorrectKeys) /
+      5 /
+      (startingTime / 60)
+    ).toFixed(2);
     const accuracy = +(
       (totalKeysPressed - incorrectKeys) /
       totalKeysPressed
     ).toFixed(2);
 
-    // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
+    // Dispatch adding the score to the datbase once test is complete (clock hits 0),
     // user has typed at least once and we are on countdown mode
-    if (testComplete && userTextInput.length !== 0 && !useCountdown) {
+    if (testComplete && userTextInput.length !== 0 && useCountdown) {
       dispatch(
         addScore({
-          timeElapsed,
+          timeElapsed: startingTime,
           totalKeysPressed,
           incorrectKeys,
           wpm,
           raw,
           accuracy,
           language: 'english',
-          testType: 'words',
+          testType: 'time',
         })
       );
       dispatch(
         addNewScore({
-          timeElapsed,
+          timeElapsed: startingTime,
           totalKeysPressed,
           incorrectKeys,
           wpm,
           raw,
           accuracy,
           language: 'english',
-          testType: 'words',
+          testType: 'time',
           userId: 1,
         })
       );
@@ -79,21 +90,28 @@ const Timer = () => {
     return () => {
       dispatch(toggleTimerActive(false));
     };
-  }, [userTextInput, quoteToType, useCountdown]);
+  }, [userTextInput, quoteToType]);
 
   useEffect(() => {
     let interval: any = null;
     if (timerActive) {
       interval = setInterval(() => {
-        dispatch(adjustTime(timeElapsed + 0.1));
+        dispatch(adjustCountdown(countdownTimer - 0.1));
       }, 100);
     } else if (!timerActive && timeElapsed !== 0) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [timerActive, timeElapsed]);
+  }, [timerActive, countdownTimer]);
 
-  return <div>{/* <p>{timeElapsed}</p> */}</div>;
+  useEffect(() => {
+    if (countdownTimer <= 0) {
+      dispatch(toggleTimerActive(false));
+      dispatch(setTestComplete(true));
+    }
+  }, [countdownTimer, timerActive]);
+
+  return <div>{/* <p>{countdownTimer}</p> */}</div>;
 };
 
 export default Timer;

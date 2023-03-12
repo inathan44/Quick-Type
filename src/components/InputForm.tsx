@@ -26,7 +26,11 @@ import {
   incrementIncorrectKeys,
   selectIncorrectKeys,
   addScore,
+  selectUseCountdown,
+  selectCountdownTimer,
 } from '../store/slices/StatSlice';
+import Countdown from './Countdown';
+import TestStatHeader from './TestStatHeader';
 
 document.cookie = 'test=test';
 
@@ -34,18 +38,20 @@ const InputForm = () => {
   const dispatch = useAppDispatch();
 
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
+  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(25);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
+  const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
   const lettersAvailable: string = useAppSelector(selectLettersAvailable);
   const quoteToType: string = useAppSelector(selectQuoteToType);
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
-  // console.log('user TI', userTextInput);
-  const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
+  const countdownTimer = useAppSelector(selectCountdownTimer);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
+  const useCountdown = useAppSelector(selectUseCountdown);
 
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
@@ -61,10 +67,11 @@ const InputForm = () => {
   }, []);
 
   useEffect(() => {
-    const randomIdx = Math.floor(Math.random() * allQuotes.length);
-    dispatch(setQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
-    dispatch(setDuplicateQuoteToType(allQuotes[randomIdx]?.text || 'Loading'));
-  }, [allQuotes]);
+    dispatch(setQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading'));
+    dispatch(
+      setDuplicateQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading')
+    );
+  }, [allQuotes, randomQuoteIndex]);
 
   useEffect(() => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
@@ -81,32 +88,37 @@ const InputForm = () => {
   }, [userTextInput, quoteToType]);
 
   return (
-    <div className="flex pt-44 flex-col items-center gap-4 text-white">
-      <Timer />
-      <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
-        Test Complete
-      </h1>
-      <div className="relative border-2 px-8 py-4 rounded-md text-3xl">
-        <TypeBoxText />
-        <textarea
-          value={userTextInput}
-          className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
-          onChange={() => {}}
-          onKeyDown={(e) => handleKeyPress(e)}
-        />
+    <>
+      <TestStatHeader />
+      <div className="flex flex-col items-center gap-4 text-white">
+        {useCountdown ? <Countdown /> : <Timer />}
+        <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
+          Test Complete
+        </h1>
+        <div className="relative px-8 py-4 text-3xl mx-auto">
+          <TypeBoxText />
+          <textarea
+            value={userTextInput}
+            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+            onChange={() => {}}
+            onKeyDown={(e) => handleKeyPress(e)}
+          />
+        </div>
+        <button
+          className="border-2 px-6 py-2 rounded-lg"
+          onClick={() => {
+            dispatch(setUserTextInput(''));
+            dispatch(setQuoteToType(duplicateQuoteToType));
+            dispatch(setExcessQuoteToType(''));
+            dispatch(adjustTime(0));
+            dispatch(resetStats());
+            setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
+          }}
+        >
+          Reset Test
+        </button>
       </div>
-      <button
-        onClick={() => {
-          dispatch(setUserTextInput(''));
-          dispatch(setQuoteToType(duplicateQuoteToType));
-          dispatch(setExcessQuoteToType(''));
-          dispatch(adjustTime(0));
-          dispatch(resetStats());
-        }}
-      >
-        Reset Test
-      </button>
-    </div>
+    </>
   );
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,11 +132,16 @@ const InputForm = () => {
       quoteToType
     );
 
-    if (isValidChar(e.key)) {
-      dispatch(incrementKeysPressed());
-    }
     if (quoteToType.length === userTextInput.length) {
       return;
+    }
+
+    if (useCountdown && countdownTimer <= 0) {
+      console.log('testComplete', testComplete);
+      return;
+    }
+    if (isValidChar(e.key)) {
+      dispatch(incrementKeysPressed());
     }
 
     const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
@@ -206,16 +223,6 @@ const InputForm = () => {
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));
       }
     }
-    // console.log('userInput', userTextInput);
-    // console.log('user last char', userTextInput[userTextInput.length - 1]);
-    // console.log('quote last char', quoteToType[userTextInput.length - 1]);
-    // if (
-    //   userTextInput[userTextInput.length - 1] !==
-    //     quoteToType[userTextInput.length - 1] &&
-    //   e.key !== 'Backspace'
-    // ) {
-    //   dispatch(incrementIncorrectKeys());
-    // }
   }
 };
 
