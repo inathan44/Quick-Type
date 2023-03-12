@@ -30,6 +30,7 @@ import {
   selectCountdownTimer,
 } from '../store/slices/StatSlice';
 import Countdown from './Countdown';
+import TestStatHeader from './TestStatHeader';
 
 document.cookie = 'test=test';
 
@@ -87,33 +88,37 @@ const InputForm = () => {
   }, [userTextInput, quoteToType]);
 
   return (
-    <div className="flex pt-44 flex-col items-center gap-4 text-white">
-      {useCountdown ? <Countdown /> : <Timer />}
-      <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
-        Test Complete
-      </h1>
-      <div className="relative border-2 px-8 py-4 rounded-md text-3xl">
-        <TypeBoxText />
-        <textarea
-          value={userTextInput}
-          className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
-          onChange={() => {}}
-          onKeyDown={(e) => handleKeyPress(e)}
-        />
+    <>
+      <TestStatHeader />
+      <div className="flex flex-col items-center gap-4 text-white">
+        {useCountdown ? <Countdown /> : <Timer />}
+        <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
+          Test Complete
+        </h1>
+        <div className="relative px-8 py-4 text-3xl mx-auto">
+          <TypeBoxText />
+          <textarea
+            value={userTextInput}
+            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+            onChange={() => {}}
+            onKeyDown={(e) => handleKeyPress(e)}
+          />
+        </div>
+        <button
+          className="border-2 px-6 py-2 rounded-lg"
+          onClick={() => {
+            dispatch(setUserTextInput(''));
+            dispatch(setQuoteToType(duplicateQuoteToType));
+            dispatch(setExcessQuoteToType(''));
+            dispatch(adjustTime(0));
+            dispatch(resetStats());
+            setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
+          }}
+        >
+          Reset Test
+        </button>
       </div>
-      <button
-        onClick={() => {
-          dispatch(setUserTextInput(''));
-          dispatch(setQuoteToType(duplicateQuoteToType));
-          dispatch(setExcessQuoteToType(''));
-          dispatch(adjustTime(0));
-          dispatch(resetStats());
-          setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
-        }}
-      >
-        Reset Test
-      </button>
-    </div>
+    </>
   );
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
