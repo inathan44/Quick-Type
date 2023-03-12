@@ -25,6 +25,17 @@ router.post('/login', async (req, res, next) => {
     err.status === 401 ? res.send(err) : next(err);
   }
 });
+// Testing posting a score to the database
+router.post('/score', async (req, res, next) => {
+  try {
+    const newScore = await Score.create(req.body);
+    res.send(newScore);
+  } catch (err) {
+    console.err(err);
+    const error = new Error('Error posting score to the DB');
+    next(error);
+  }
+});
 
 router.use((req, res, next) => {
   const err = new Error('API ROUTE NOT FOUND');
