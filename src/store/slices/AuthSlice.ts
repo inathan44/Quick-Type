@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+// import { RootState } from '..';
 
 interface InitialState {
   logged: boolean;
@@ -35,6 +36,21 @@ export const logInUser = createAsyncThunk(
     }
   }
 );
+// POSSIBLE FUTURE USES
+// export const addTokenToState = createAsyncThunk(
+//   'addTokenToState',
+//   async (x, { rejectWithValue }) => {
+//     try {
+//       const token = localStorage.getItem('token');
+//       if (await axios.get(`http://localhost:3030/api/verify/${token}`)) {
+//         return token;
+//       }
+//     } catch (err) {
+//       return rejectWithValue(err);
+//     }
+//   }
+// );
+
 export const authorizeToken = createAsyncThunk(
   'AuthorizeToeken',
   async (x, { rejectWithValue }) => {
@@ -86,9 +102,28 @@ const AuthSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
+    // builder.addCase(addTokenToState.pending, (state, action) => {
+    //   state.loading = true;
+    //   state.error = '';
+    // });
+    // builder.addCase(addTokenToState.fulfilled, (state, { payload }) => {
+    //   state.loading = false;
+    //   if (payload) {
+    //     state.token = payload;
+    //   } else {
+    //     state.token = '';
+    //   }
+    // });
+    // builder.addCase(addTokenToState.rejected, (state, action) => {
+    //   state.loading = false;
+    //   state.token = '';
+    //   state.error = action.error.message;
+    // });
   },
 });
 
 export const {} = AuthSlice.actions;
+
+export const dataState = (state: any) => state.auth.data;
 
 export default AuthSlice.reducer;
