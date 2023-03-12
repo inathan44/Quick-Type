@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { requireTokenAuth } = require('./authMIdWare.cjs');
 const { User, Score } = require('./db/index.cjs');
 
 router.post('/signup', async (req, res, next) => {
