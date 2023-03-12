@@ -17,7 +17,7 @@ router.post('/score', async (req, res, next) => {
     console.log('newScore', newScore);
     res.send(newScore);
   } catch (err) {
-    console.err(err);
+    console.error(err);
     const error = new Error('Error posting score to the DB');
     next(error);
   }
