@@ -7,6 +7,8 @@ const User = require('./models/User.cjs');
 User.hasMany(Score);
 Score.belongsTo(User);
 
+db.sync();
+
 module.exports = {
   db,
   Score,
