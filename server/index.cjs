@@ -8,6 +8,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use('/api', require('./api.cjs'));
+app.get('/', (req, res, next) => {
+  res.send('backend running');
+});
 app.use((err, req, res, next) => {
   console.error(err);
   console.error(err.stack);
