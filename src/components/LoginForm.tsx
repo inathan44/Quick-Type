@@ -1,6 +1,10 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logInUser, authorizeToken } from '../store/slices/AuthSlice';
+import {
+  logInUser,
+  authorizeToken,
+  rejectedState,
+} from '../store/slices/AuthSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,6 +13,8 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const rejectState = useAppSelector(rejectedState);
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -21,11 +27,20 @@ const LoginForm = () => {
     await dispatch(authorizeToken());
     setUsername('');
     setPassword('');
-    navigate('/');
+    const token = localStorage.getItem('token');
+    console.log(token);
+    if (token !== '[object Object]') {
+      navigate('/');
+    }
   };
 
   return (
     <div>
+      {rejectState === 'Rejected' ? (
+        <div className="text-white block">Invalid Username/Password </div>
+      ) : (
+        <div></div>
+      )}
       <h1 className="text-white block">LOGIN </h1>
       <form id="form1" onSubmit={handleSubmit}>
         <label className="text-white block"> USERNAME</label>
