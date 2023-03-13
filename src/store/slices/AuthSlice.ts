@@ -25,10 +25,13 @@ export const logInUser = createAsyncThunk(
   'LoginUser',
   async ({ username, password }: loggedInInfoInt, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post('http://localhost:3030/api/login', {
-        username: username,
-        password: password,
-      });
+      const { data } = await axios.post(
+        'https://quick-type-1tb5.onrender.com/api/login',
+        {
+          username: username,
+          password: password,
+        }
+      );
       console.log('data', data);
       localStorage.setItem('token', data);
       return data;
@@ -58,11 +61,14 @@ export const authorizeToken = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       if (!token) return {};
-      const { data } = await axios.get('http://localhost:3030/api/auth', {
-        headers: {
-          token: token,
-        },
-      });
+      const { data } = await axios.get(
+        'https://quick-type-1tb5.onrender.com/api/auth',
+        {
+          headers: {
+            token: token,
+          },
+        }
+      );
       return { data, token };
     } catch (err) {
       return rejectWithValue(err);

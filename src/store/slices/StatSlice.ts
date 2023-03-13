@@ -50,7 +50,7 @@ export const addNewScore = createAsyncThunk(
   async (body: Stat, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
-        'http://localhost:3030/api/score',
+        `https://quick-type-1tb5.onrender.com/api/score`,
         body
       );
       // console.log('axios post score data', data);
