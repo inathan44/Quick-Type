@@ -41,7 +41,7 @@ const LoginForm = () => {
         <div></div>
       )}
       <h1 className="text-white block">LOGIN </h1>
-      <form id="form1" onSubmit={handleSubmit}>
+      <form className="text-black" id="form1" onSubmit={handleSubmit}>
         <label className="text-white block"> USERNAME</label>
         <input
           type="text"
