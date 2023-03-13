@@ -15,6 +15,9 @@ import {
   fetchAllQuotes,
   selectAllQuotes,
   QuoteFormat,
+  selectRandomWords,
+  selectNumOfWordsToType,
+  generateRandomWords,
 } from '../store/slices/TypeInputSlice';
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
@@ -27,16 +30,19 @@ import {
   selectIncorrectKeys,
   selectUseCountdown,
   selectCountdownTimer,
+  selectLanguage,
 } from '../store/slices/StatSlice';
 import Countdown from './Countdown';
 import TestStatHeader from './TestStatHeader';
 import OptionsMenu from './OptionsMenu';
+import { useNavigate } from 'react-router-dom';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
+
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
-  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(0);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
@@ -45,6 +51,9 @@ const InputForm = () => {
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
   const countdownTimer = useAppSelector(selectCountdownTimer);
+  const randomWordList = useAppSelector(selectRandomWords);
+  const numOfWordsToType = useAppSelector(selectNumOfWordsToType);
+  const language = useAppSelector(selectLanguage);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
@@ -58,19 +67,39 @@ const InputForm = () => {
   }
 
   useEffect(() => {
-    setRandomQuoteIndex(Math.floor(Math.random() * 1642));
     dispatch(setUserTextInput(''));
     dispatch(setQuoteToType(duplicateQuoteToType));
     dispatch(setExcessQuoteToType(''));
     dispatch(fetchAllQuotes());
   }, []);
 
+  // useEffect(() => {
+  //   if (lastKeyPressed === 'CapsLock') {
+  //     setCapsLockOn((prev) => !prev);
+  //   }
+  //   return () => setCapsLockOn(false);
+  // }, [lastKeyPressed, capsLockOn]);
+
   useEffect(() => {
-    dispatch(setQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading'));
+    dispatch(setTestComplete(false));
+    return () => {
+      dispatch(setTestComplete(false));
+    };
+  }, []);
+
+  useEffect(() => {
     dispatch(
-      setDuplicateQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading')
+      setQuoteToType(
+        randomWordList.slice(0, numOfWordsToType).join(' ') || 'Loading'
+      )
     );
-  }, [allQuotes, randomQuoteIndex]);
+    dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
+  }, []);
+
+  useEffect(() => {
+    dispatch(setQuoteToType(randomWordList.join(' ') || 'Loading'));
+    dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
+  }, [useCountdown, numOfWordsToType, language]);
 
   useEffect(() => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
@@ -104,19 +133,6 @@ const InputForm = () => {
             onKeyDown={(e) => handleKeyPress(e)}
           />
         </div>
-        <button
-          className="border-2 px-6 py-2 rounded-lg"
-          onClick={() => {
-            dispatch(setUserTextInput(''));
-            dispatch(setQuoteToType(duplicateQuoteToType));
-            dispatch(setExcessQuoteToType(''));
-            dispatch(adjustTime(0));
-            dispatch(resetStats());
-            setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
-          }}
-        >
-          Reset Test
-        </button>
       </div>
     </>
   );

@@ -5,12 +5,11 @@ import {
   changeMode,
   selectUseCountdown,
   setTestTime,
-  setTestWords,
   changeTestLangauge,
   resetStats,
 } from '../store/slices/StatSlice';
 import OptionButton from './OptionButton';
-import { resetUserInput } from '../store/slices/TypeInputSlice';
+import { resetUserInput, setTestWords } from '../store/slices/TypeInputSlice';
 
 export type Mode = 'Time' | 'Words';
 export type Languages = 'English' | 'HTML' | 'JavaScript';

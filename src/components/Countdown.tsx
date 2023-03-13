@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { authorizeToken } from '../store/slices/AuthSlice';
 import { dataState } from '../store/slices/AuthSlice';
@@ -14,6 +15,8 @@ import {
   adjustCountdown,
   selectUseCountdown,
   selectStartingTime,
+  adjustWpm,
+  adjustAccuracy,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -25,6 +28,7 @@ import {
 
 const Timer = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [timeRemaining, setTimeRemaining] = useState(15);
 
@@ -52,6 +56,9 @@ const Timer = () => {
       (totalKeysPressed - incorrectKeys) /
       totalKeysPressed
     ).toFixed(2);
+
+    dispatch(adjustWpm(wpm));
+    dispatch(adjustAccuracy(accuracy));
 
     // Dispatch adding the score to the datbase once test is complete (clock hits 0),
     // user has typed at least once and we are on countdown mode
@@ -90,6 +97,13 @@ const Timer = () => {
     }
     dispatch(authorizeToken());
   }, [testComplete]);
+
+  useEffect(() => {
+    if (testComplete && userTextInput.length > 0) {
+      navigate('/results');
+      dispatch(setTestComplete(false));
+    }
+  }, [testComplete, userTextInput]);
 
   useEffect(() => {
     if (userTextInput.length > 0 && userTextInput.length < quoteToType.length) {

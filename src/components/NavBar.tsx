@@ -33,6 +33,7 @@ const NavBar = () => {
             altText="Bar chart icon"
             link="/Leaderboards"
           />
+          <NavLink link="/results" linkName="Results" />
           <NavLink
             linkName="Account"
             imgUrl={accountIcon}
