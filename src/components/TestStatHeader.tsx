@@ -35,9 +35,6 @@ const TestStatHeader = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
 
-  console.log('startingTime', startingTime);
-  console.log('countdownTimer', countdownTimer);
-
   useEffect(() => {
     if (useCountdown) {
       if (Number.isInteger(countdownTimer)) {
