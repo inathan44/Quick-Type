@@ -13,7 +13,6 @@ const User = db.define('user', {
     // Usernames between 6 - 16 characters only letters
     validate: {
       len: [6, 16],
-      isAlpha: true,
     },
   },
   email: {
