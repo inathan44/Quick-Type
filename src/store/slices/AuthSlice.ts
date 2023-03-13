@@ -132,5 +132,6 @@ const AuthSlice = createSlice({
 export const {} = AuthSlice.actions;
 
 export const dataState = (state: any) => state.auth.data;
+export const rejectedState = (state: any) => state.auth.error;
 
 export default AuthSlice.reducer;
