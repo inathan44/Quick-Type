@@ -6,7 +6,6 @@ import {
   rejectedState,
 } from '../store/slices/AuthSlice';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const LoginForm = () => {
   const navigate = useNavigate();
