@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const User = require('./User.cjs');
 const db = require('../database.cjs');
 
 const Score = db.define('score', {
@@ -35,5 +36,20 @@ const Score = db.define('score', {
     allowNull: false,
   },
 });
+
+Score.getTopTen = async function () {
+  return await Score.findAll({
+    limit: 10,
+    order: [['wpm', 'DESC']],
+    include: [
+      {
+        model: User,
+      },
+    ],
+  });
+};
+Score.numberOfTests = async function () {
+  return await Score.count({});
+};
 
 module.exports = Score;
