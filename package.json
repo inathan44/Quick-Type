@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "server": "nodemon server/index.cjs"
+    "server": "nodemon server/index.cjs",
+    "seed": "node seed.cjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.3",

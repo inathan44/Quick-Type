@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { authorizeToken } from '../store/slices/AuthSlice';
+import { dataState } from '../store/slices/AuthSlice';
 import {
   toggleTimerActive,
   selectTimeElapsed,
@@ -19,6 +21,7 @@ import {
 
 const Timer = () => {
   const dispatch = useAppDispatch();
+  const userData = useAppSelector(dataState);
   const timeElapsed = useAppSelector(selectTimeElapsed);
   const timerActive = useAppSelector(selectTimerActive);
   const quoteToType = useAppSelector(selectQuoteToType);
@@ -43,21 +46,41 @@ const Timer = () => {
 
     // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
     // user has typed at least once and we are on countdown mode
+    // dispatch(authorizeToken());
     if (testComplete && userTextInput.length !== 0 && !useCountdown) {
-      dispatch(
-        addNewScore({
-          timeElapsed,
-          totalKeysPressed,
-          incorrectKeys,
-          wpm,
-          raw,
-          accuracy,
-          language: 'English',
-          testType: 'words',
-          userId: 1,
-        })
-      );
+      async function dispatchData() {
+        if (userData) {
+          dispatch(
+            addNewScore({
+              timeElapsed,
+              totalKeysPressed,
+              incorrectKeys,
+              wpm,
+              raw,
+              accuracy,
+              language: 'English',
+              testType: 'words',
+              userId: userData.id,
+            })
+          );
+        } else {
+          dispatch(
+            addNewScore({
+              timeElapsed,
+              totalKeysPressed,
+              incorrectKeys,
+              wpm,
+              raw,
+              accuracy,
+              language: 'English',
+              testType: 'words',
+            })
+          );
+        }
+      }
+      dispatchData();
     }
+    dispatch(authorizeToken());
   }, [testComplete]);
 
   useEffect(() => {

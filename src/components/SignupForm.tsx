@@ -1,7 +1,7 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import axios from 'axios';
 
-const LogInForm = () => {
+const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,23 +20,19 @@ const LogInForm = () => {
   return (
     <div>
       <form id="form1" onSubmit={handleSubmit}>
-        <label className="text-white"> USERNAME</label>
+        <label className="text-white block"> USERNAME</label>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <br />
-        <br />
-        <label className="text-white"> EMAIL</label>
+        <label className="text-white block"> EMAIL</label>
         <input
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <br />
-        <br />
-        <label className="text-white"> PASSWORD</label>
+        <label className="text-white block"> PASSWORD</label>
         <input
           type="text"
           value={password}
@@ -51,4 +47,4 @@ const LogInForm = () => {
   );
 };
 
-export default LogInForm;
+export default Signup;

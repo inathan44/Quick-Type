@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import keyboardIcon from '../assets/icons8-keyboard-64.png';
 import barChartIcon from '../assets/bar-chart-icon.svg';
 import accountIcon from '../assets/account-icon.svg';
+import { authorizeToken } from '../store/slices/AuthSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { Link } from 'react-router-dom';
 import NavLink from './NavLink';
 
 const NavBar = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    // checks the token on reload and adds user data to the state for posting later
+    dispatch(authorizeToken());
+  }, []);
+
   return (
     <div className="text-white">
       <nav className="px-6 py-3 flex justify-between">
