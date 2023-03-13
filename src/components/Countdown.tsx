@@ -9,7 +9,6 @@ import {
   selectTimerActive,
   selectTotalKeysPressed,
   selectIncorrectKeys,
-  addScore,
   addNewScore,
   selectCountdownTimer,
   adjustCountdown,
@@ -67,7 +66,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'english',
+              language: 'English',
               testType: 'time',
               userId: userData.id,
             })
@@ -81,7 +80,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'english',
+              language: 'English',
               testType: 'time',
             })
           );

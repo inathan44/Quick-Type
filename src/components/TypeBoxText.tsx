@@ -34,7 +34,7 @@ const TypeBoxText = () => {
         <span
           className={
             idx === userTextInput.length - 1
-              ? "after:content-['|'] after:animate-[cursor-blink_2s_infinite] after:opacity-.1 after:text-yellow-400"
+              ? "after:content-['|'] after:animate-[cursor-blink_2s_infinite] after:opacity-.1 after:text-yellow-400 after:absolute after:right-[-4px] relative"
               : ''
           }
           key={idx}

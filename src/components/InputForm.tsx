@@ -25,20 +25,18 @@ import {
   resetStats,
   incrementIncorrectKeys,
   selectIncorrectKeys,
-  addScore,
   selectUseCountdown,
   selectCountdownTimer,
 } from '../store/slices/StatSlice';
 import Countdown from './Countdown';
 import TestStatHeader from './TestStatHeader';
-
-document.cookie = 'test=test';
+import OptionsMenu from './OptionsMenu';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
-  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(25);
+  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(0);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
@@ -60,6 +58,7 @@ const InputForm = () => {
   }
 
   useEffect(() => {
+    setRandomQuoteIndex(Math.floor(Math.random() * 1642));
     dispatch(setUserTextInput(''));
     dispatch(setQuoteToType(duplicateQuoteToType));
     dispatch(setExcessQuoteToType(''));
@@ -90,6 +89,7 @@ const InputForm = () => {
   return (
     <>
       <TestStatHeader />
+      <OptionsMenu />
       <div className="flex flex-col items-center gap-4 text-white">
         {useCountdown ? <Countdown /> : <Timer />}
         <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
@@ -137,7 +137,6 @@ const InputForm = () => {
     }
 
     if (useCountdown && countdownTimer <= 0) {
-      // console.log('testComplete', testComplete);
       return;
     }
     if (isValidChar(e.key)) {

@@ -9,7 +9,6 @@ import {
   selectTimerActive,
   selectTotalKeysPressed,
   selectIncorrectKeys,
-  addScore,
   addNewScore,
   selectUseCountdown,
 } from '../store/slices/StatSlice';
@@ -35,9 +34,11 @@ const Timer = () => {
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
-    const wpm = +(duplicateQuoteToType.length / 5 / (timeElapsed / 60)).toFixed(
-      2
-    );
+    const wpm = +(
+      (totalKeysPressed - incorrectKeys) /
+      5 /
+      (timeElapsed / 60)
+    ).toFixed(2);
     const accuracy = +(
       (totalKeysPressed - incorrectKeys) /
       totalKeysPressed
@@ -57,7 +58,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'english',
+              language: 'English',
               testType: 'words',
               userId: userData.id,
             })
@@ -71,7 +72,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'english',
+              language: 'English',
               testType: 'words',
             })
           );
