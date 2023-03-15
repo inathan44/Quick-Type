@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectTestComplete,
@@ -42,6 +42,8 @@ const InputForm = () => {
 
   const navigate = useNavigate();
 
+  const [border, setBorder] = useState(false);
+
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
@@ -72,13 +74,6 @@ const InputForm = () => {
     dispatch(setExcessQuoteToType(''));
     dispatch(fetchAllQuotes());
   }, []);
-
-  // useEffect(() => {
-  //   if (lastKeyPressed === 'CapsLock') {
-  //     setCapsLockOn((prev) => !prev);
-  //   }
-  //   return () => setCapsLockOn(false);
-  // }, [lastKeyPressed, capsLockOn]);
 
   useEffect(() => {
     dispatch(setTestComplete(false));
@@ -115,6 +110,16 @@ const InputForm = () => {
     }
   }, [userTextInput, quoteToType]);
 
+  function handleFocus() {
+    setBorder(true);
+  }
+
+  function handleBlur() {
+    setBorder(false);
+  }
+
+  const textInput = useRef(null);
+
   return (
     <>
       <TestStatHeader />
@@ -124,13 +129,21 @@ const InputForm = () => {
         <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
           Test Complete
         </h1>
-        <div className="relative px-8 py-4 text-3xl mx-auto">
+        <div
+          className={`relative px-8 py-4 text-3xl mx-auto ${
+            border ? 'border-2' : ''
+          }`}
+        >
           <TypeBoxText />
           <textarea
             value={userTextInput}
-            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0 "
             onChange={() => {}}
             onKeyDown={(e) => handleKeyPress(e)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoFocus
+            ref={textInput}
           />
         </div>
       </div>
