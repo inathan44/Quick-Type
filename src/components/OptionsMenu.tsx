@@ -40,7 +40,7 @@ const OptionsMenu = () => {
   const dispatch = useAppDispatch();
 
   const [mode, setMode] = useState<ModeState>({
-    activeMode: 'Time',
+    activeMode: 'Words',
     modes: [{ id: 'Time' }, { id: 'Words' }],
   });
 
