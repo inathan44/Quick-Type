@@ -62,6 +62,8 @@ const InputForm = () => {
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const useCountdown = useAppSelector(selectUseCountdown);
 
+  console.log('user text', userTextInput);
+
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
   function isValidChar(char: string): boolean {
@@ -106,7 +108,7 @@ const InputForm = () => {
         quoteToType.charAt(userTextInput.length - 1) &&
       lastKeyPressed !== 'Backspace'
     ) {
-      dispatch(incrementIncorrectKeys());
+      dispatch(incrementIncorrectKeys(1));
     }
   }, [userTextInput, quoteToType]);
 
@@ -161,6 +163,8 @@ const InputForm = () => {
       quoteToType
     );
 
+    // console.log('logicData', logicData.userTypedWord);
+
     if (quoteToType.length === userTextInput.length) {
       return;
     }
@@ -186,8 +190,9 @@ const InputForm = () => {
             )
           );
           dispatch(setUserTextInput(userTextInput.concat(e.key)));
+          // the tilde (~) is used as a character that the algo knows to code as an excess letter
           dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
-          dispatch(incrementIncorrectKeys());
+          dispatch(incrementIncorrectKeys(1));
         } else if (e.key === 'Backspace') {
           // When Backspace is pressed but space SHOULD have been pressed
 
@@ -244,8 +249,21 @@ const InputForm = () => {
           )
         );
       } else if (e.key === ' ') {
-        dispatch(setUserTextInput(userTextInput.concat('*')));
-        dispatch(setExcessQuoteToType(excessQuoteToType.concat('*')));
+        dispatch(
+          incrementIncorrectKeys(logicData.lettersRemainingInCurrentWord)
+        );
+        let skipToNextWord = '';
+        for (let i = 0; i < logicData.lettersRemainingInCurrentWord; i++) {
+          skipToNextWord = skipToNextWord.concat('%');
+        }
+        skipToNextWord = skipToNextWord.concat(' ');
+        console.log('userTextInput', userTextInput);
+        console.log('skipToNextWord', skipToNextWord);
+
+        dispatch(setUserTextInput(userTextInput.concat(skipToNextWord)));
+        dispatch(
+          setExcessQuoteToType(excessQuoteToType.concat(skipToNextWord))
+        );
       } else if (isValidChar(e.key)) {
         dispatch(setUserTextInput(userTextInput.concat(e.key)));
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));

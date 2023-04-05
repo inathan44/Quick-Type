@@ -6,6 +6,7 @@ interface KeyLogic {
   userTypedWord: string;
   reassignWord: string;
   splitQuote: string[];
+  lettersRemainingInCurrentWord: number;
 }
 
 function deleteExcessLettersData(
@@ -14,21 +15,30 @@ function deleteExcessLettersData(
   quoteToType: string
 ): KeyLogic {
   const currentWordNumber = userTextInput.split(' ').length;
+
   const userInputWordLength =
     userTextInput.split(' ')[currentWordNumber - 1].length;
+
   const quoteWordLength =
     duplicateQuoteToType.split(' ')[currentWordNumber - 1].length;
+
   const quoteWord = duplicateQuoteToType.split(' ')[currentWordNumber - 1];
+
   const userTypedWord = userTextInput
     .split(' ')
     [currentWordNumber - 1].slice(
       0,
       userTextInput.split(' ')[currentWordNumber - 1].length - 1
     );
+
   const reassignWord = quoteWord.concat(
     userTypedWord.slice(quoteWordLength, userInputWordLength - 1)
   );
+
   const splitQuote = quoteToType.split(' ');
+
+  const lettersRemainingInCurrentWord = quoteWordLength - userInputWordLength;
+
   return {
     currentWordNumber,
     userInputWordLength,
@@ -37,6 +47,7 @@ function deleteExcessLettersData(
     userTypedWord,
     reassignWord,
     splitQuote,
+    lettersRemainingInCurrentWord,
   };
 }
 

@@ -87,8 +87,8 @@ const StatSlice = createSlice({
       state.countdownTimer = state.startingTime;
       state.lastTest = undefined;
     },
-    incrementIncorrectKeys(state) {
-      state.incorrectKeys++;
+    incrementIncorrectKeys(state, action: PayloadAction<number>) {
+      state.incorrectKeys += action.payload;
     },
     setTestTime(state, action: PayloadAction<number>) {
       state.countdownTimer = action.payload;
