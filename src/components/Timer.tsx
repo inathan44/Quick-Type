@@ -38,22 +38,24 @@ const Timer = () => {
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
   const useCountdown = useAppSelector(selectUseCountdown);
-  // const wpm = useAppSelector(selectWpm);
+  const wpm = useAppSelector(selectWpm);
   // const accuracy = useAppSelector(selectAccuracy);
+
+  console.log('WPM FROM SLICE', wpm);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
-    const wpm = +(
-      (totalKeysPressed - incorrectKeys) /
-      5 /
-      (timeElapsed / 60)
-    ).toFixed(2);
+    // const wpm = +(
+    //   (totalKeysPressed - incorrectKeys) /
+    //   5 /
+    //   (timeElapsed / 60)
+    // ).toFixed(2);
     const accuracy = +(
       (totalKeysPressed - incorrectKeys) /
       totalKeysPressed
     ).toFixed(2);
 
-    dispatch(adjustWpm(wpm));
+    // dispatch(adjustWpm(wpm));
     dispatch(adjustAccuracy(accuracy));
 
     // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
