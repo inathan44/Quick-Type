@@ -29,7 +29,8 @@ const TypeBoxText = () => {
   }
 
   function isSkippedLetter(idx: number): boolean {
-    if (excessQuoteToType[idx] === '%') return true;
+    if (excessQuoteToType[idx] === '%' || excessQuoteToType[idx] === '#')
+      return true;
     return false;
   }
 

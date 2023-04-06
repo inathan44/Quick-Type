@@ -18,6 +18,7 @@ import {
   selectDuplicateQuoteToType,
 } from '../store/slices/TypeInputSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { CalculateWPM } from '../helperFunctions';
 
 const TestStatHeader = () => {
   const dispatch = useAppDispatch();
@@ -46,7 +47,6 @@ const TestStatHeader = () => {
           ).toFixed(2) || 0
         );
       }
-      // console.log('is int?:', Number.isInteger(countdownTimer));
     } else {
       if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
         setWpm(
@@ -57,7 +57,19 @@ const TestStatHeader = () => {
           ).toFixed(2)
         );
       }
-      // console.log('is int?:', Number.isInteger(timeElapsed));
+
+      console.log(
+        'WPM FROM FUNC',
+        CalculateWPM(
+          useCountdown,
+          totalKeysPressed,
+          incorrectKeys,
+          timeElapsed,
+          countdownTimer,
+          startingTime,
+          userTextInput
+        )
+      );
     }
   }, [timeElapsed, countdownTimer]);
 

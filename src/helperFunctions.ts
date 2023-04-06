@@ -1,3 +1,40 @@
+////////////////////////////////////////////////////////////////////////////////////
+function CalculateWPM(
+  useCountdown: boolean,
+  totalKeysPressed: number,
+  incorrectKeys: number,
+  timeElapsed: number,
+  countdownTimer: number,
+  startingTime: number,
+  userTextInput: string
+): number {
+  let wpm = 0;
+  const incorrectNonSkipped = userTextInput.replace(/[^%]/g, '').length;
+  console.log('incorrectNonSkipped', incorrectNonSkipped);
+  if (useCountdown) {
+    if (Number.isInteger(countdownTimer)) {
+      wpm =
+        +(
+          (totalKeysPressed - incorrectKeys) /
+          5 /
+          ((startingTime - countdownTimer) / 60)
+        ).toFixed(2) || 0;
+    }
+  } else {
+    if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
+      wpm = +(
+        (totalKeysPressed - incorrectKeys) /
+        5 /
+        (timeElapsed / 60)
+      ).toFixed(2);
+    }
+  }
+  return wpm;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////
 interface KeyLogic {
   currentWordNumber: number;
   userInputWordLength: number;
@@ -50,7 +87,9 @@ function deleteExcessLettersData(
     lettersRemainingInCurrentWord,
   };
 }
+////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////
 function remakeQuoteString(
   userTextInput: string,
   duplicateQuoteToType: string,
@@ -66,6 +105,7 @@ function remakeQuoteString(
   splitQuote[logicData.currentWordNumber - 1] = logicData.reassignWord;
   return splitQuote.join(' ');
 }
+////////////////////////////////////////////////////////////////////////////////////
 
 export const allWordsList = [
   'a',
@@ -1070,4 +1110,4 @@ export const allWordsList = [
   'yourself',
 ];
 
-export { deleteExcessLettersData, remakeQuoteString };
+export { deleteExcessLettersData, remakeQuoteString, CalculateWPM };

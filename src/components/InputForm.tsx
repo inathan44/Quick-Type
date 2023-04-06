@@ -62,8 +62,6 @@ const InputForm = () => {
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const useCountdown = useAppSelector(selectUseCountdown);
 
-  console.log('user text', userTextInput);
-
   // Checks if key pressed is part of the character bank
   // Stops other keys from interfering with test
   function isValidChar(char: string): boolean {
@@ -249,16 +247,22 @@ const InputForm = () => {
           )
         );
       } else if (e.key === ' ') {
+        // Pressing space will skip to the next word
+
+        // Don't allow pressing space when user is at the beginning of a word
+        if (userTextInput.slice(-1) === ' ' || userTextInput.length == 0) {
+          return;
+        }
         dispatch(
           incrementIncorrectKeys(logicData.lettersRemainingInCurrentWord)
         );
-        let skipToNextWord = '';
-        for (let i = 0; i < logicData.lettersRemainingInCurrentWord; i++) {
+        // # char indicates a space was pressed before the end of a word
+        let skipToNextWord = '#';
+        for (let i = 0; i < logicData.lettersRemainingInCurrentWord - 1; i++) {
+          // % char is viewed as a skipped character
           skipToNextWord = skipToNextWord.concat('%');
         }
         skipToNextWord = skipToNextWord.concat(' ');
-        console.log('userTextInput', userTextInput);
-        console.log('skipToNextWord', skipToNextWord);
 
         dispatch(setUserTextInput(userTextInput.concat(skipToNextWord)));
         dispatch(
