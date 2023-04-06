@@ -32,6 +32,7 @@ interface InitStatState {
   lastTest?: Stat;
   wpm: number;
   accuracy: number;
+  skippedCharacters: number;
 }
 
 const initialState: InitStatState = {
@@ -45,6 +46,7 @@ const initialState: InitStatState = {
   language: 'English',
   wpm: 0,
   accuracy: 0,
+  skippedCharacters: 0,
 };
 
 export const addNewScore = createAsyncThunk(
@@ -89,6 +91,9 @@ const StatSlice = createSlice({
     },
     incrementIncorrectKeys(state, action: PayloadAction<number>) {
       state.incorrectKeys += action.payload;
+    },
+    incrementSkippedCharacters(state, action: PayloadAction<number>) {
+      state.skippedCharacters += action.payload;
     },
     setTestTime(state, action: PayloadAction<number>) {
       state.countdownTimer = action.payload;
