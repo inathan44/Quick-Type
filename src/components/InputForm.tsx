@@ -249,8 +249,12 @@ const InputForm = () => {
       } else if (e.key === ' ') {
         // Pressing space will skip to the next word
 
-        // Don't allow pressing space when user is at the beginning of a word
-        if (userTextInput.slice(-1) === ' ' || userTextInput.length == 0) {
+        // Don't allow pressing space when user is at the beginning of a word or on the last word
+        if (
+          userTextInput.slice(-1) === ' ' ||
+          userTextInput.length == 0 ||
+          logicData.currentWordNumber === duplicateQuoteToType.split(' ').length
+        ) {
           return;
         }
         dispatch(
