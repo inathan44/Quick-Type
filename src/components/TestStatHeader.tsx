@@ -10,6 +10,7 @@ import {
   selectUseCountdown,
   selectCountdownTimer,
   selectStartingTime,
+  adjustWpm,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -36,30 +37,11 @@ const TestStatHeader = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
 
-  useEffect(() => {
-    if (useCountdown) {
-      if (Number.isInteger(countdownTimer)) {
-        setWpm(
-          +(
-            (totalKeysPressed - incorrectKeys) /
-            5 /
-            ((startingTime - countdownTimer) / 60)
-          ).toFixed(2) || 0
-        );
-      }
-    } else {
-      if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
-        setWpm(
-          +(
-            (totalKeysPressed - incorrectKeys) /
-            5 /
-            (timeElapsed / 60)
-          ).toFixed(2)
-        );
-      }
+  console.log(wpm);
 
-      console.log(
-        'WPM FROM FUNC',
+  useEffect(() => {
+    dispatch(
+      adjustWpm(
         CalculateWPM(
           useCountdown,
           totalKeysPressed,
@@ -67,10 +49,24 @@ const TestStatHeader = () => {
           timeElapsed,
           countdownTimer,
           startingTime,
-          userTextInput
+          userTextInput,
+          wpm
         )
-      );
-    }
+      )
+    );
+
+    setWpm(
+      CalculateWPM(
+        useCountdown,
+        totalKeysPressed,
+        incorrectKeys,
+        timeElapsed,
+        countdownTimer,
+        startingTime,
+        userTextInput,
+        wpm
+      )
+    );
   }, [timeElapsed, countdownTimer]);
 
   return (
