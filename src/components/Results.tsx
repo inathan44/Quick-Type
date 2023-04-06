@@ -13,8 +13,6 @@ const Results = () => {
   const accuracy = useAppSelector(selectAccuracy);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
 
-  // if (!lastTest.ra) return <h1>Loading...</h1>;
-
   return (
     <section className="text-gray-300">
       <h1 className="text-center text-5xl my-12">Test Stats</h1>
