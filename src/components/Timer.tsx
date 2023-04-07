@@ -24,6 +24,7 @@ import {
   selectDuplicateQuoteToType,
   setTestComplete,
 } from '../store/slices/TypeInputSlice';
+import { calculateAccuracy } from '../helperFunctions';
 
 const Timer = () => {
   const dispatch = useAppDispatch();
@@ -39,23 +40,16 @@ const Timer = () => {
   const testComplete = useAppSelector(selectTestComplete);
   const useCountdown = useAppSelector(selectUseCountdown);
   const wpm = useAppSelector(selectWpm);
-  // const accuracy = useAppSelector(selectAccuracy);
-
-  console.log('WPM FROM SLICE', wpm);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
-    // const wpm = +(
-    //   (totalKeysPressed - incorrectKeys) /
-    //   5 /
-    //   (timeElapsed / 60)
-    // ).toFixed(2);
-    const accuracy = +(
-      (totalKeysPressed - incorrectKeys) /
-      totalKeysPressed
-    ).toFixed(2);
 
-    // dispatch(adjustWpm(wpm));
+    const accuracy = calculateAccuracy(
+      totalKeysPressed,
+      incorrectKeys,
+      userTextInput
+    );
+
     dispatch(adjustAccuracy(accuracy));
 
     // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
