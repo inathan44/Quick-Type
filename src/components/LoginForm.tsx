@@ -27,7 +27,6 @@ const LoginForm = () => {
     setUsername('');
     setPassword('');
     const token = localStorage.getItem('token');
-    console.log(token);
     if (token !== '[object Object]') {
       navigate('/');
     }

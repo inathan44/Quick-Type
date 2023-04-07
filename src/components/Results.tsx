@@ -13,8 +13,6 @@ const Results = () => {
   const accuracy = useAppSelector(selectAccuracy);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
 
-  // if (!lastTest.ra) return <h1>Loading...</h1>;
-
   return (
     <section className="text-gray-300">
       <h1 className="text-center text-5xl my-12">Test Stats</h1>
@@ -26,7 +24,7 @@ const Results = () => {
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
           <h2 className="font-bold text-5xl">Accuracy</h2>
           <p className="text-4xl font-bold text-green-600">
-            {accuracy * 100 || 'N/A'}%
+            {(accuracy * 100).toFixed(0) || 'N/A'}%
           </p>
         </div>
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
@@ -36,7 +34,7 @@ const Results = () => {
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
           <h2 className="font-bold text-5xl">Raw</h2>
           <p className="text-4xl font-bold text-sky-700">
-            {lastTest ? lastTest.raw : 'Loading...'}
+            {lastTest ? lastTest.raw : 'Calculating...'}
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectTestComplete,
@@ -42,6 +42,8 @@ const InputForm = () => {
 
   const navigate = useNavigate();
 
+  const [border, setBorder] = useState(false);
+
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
@@ -72,13 +74,6 @@ const InputForm = () => {
     dispatch(setExcessQuoteToType(''));
     dispatch(fetchAllQuotes());
   }, []);
-
-  // useEffect(() => {
-  //   if (lastKeyPressed === 'CapsLock') {
-  //     setCapsLockOn((prev) => !prev);
-  //   }
-  //   return () => setCapsLockOn(false);
-  // }, [lastKeyPressed, capsLockOn]);
 
   useEffect(() => {
     dispatch(setTestComplete(false));
@@ -111,9 +106,19 @@ const InputForm = () => {
         quoteToType.charAt(userTextInput.length - 1) &&
       lastKeyPressed !== 'Backspace'
     ) {
-      dispatch(incrementIncorrectKeys());
+      dispatch(incrementIncorrectKeys(1));
     }
   }, [userTextInput, quoteToType]);
+
+  function handleFocus() {
+    setBorder(true);
+  }
+
+  function handleBlur() {
+    setBorder(false);
+  }
+
+  const textInput = useRef(null);
 
   return (
     <>
@@ -124,13 +129,21 @@ const InputForm = () => {
         <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
           Test Complete
         </h1>
-        <div className="relative px-8 py-4 text-3xl mx-auto">
+        <div
+          className={`relative px-8 py-4 text-3xl mx-auto ${
+            border ? 'border-2' : ''
+          }`}
+        >
           <TypeBoxText />
           <textarea
             value={userTextInput}
-            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0 "
             onChange={() => {}}
             onKeyDown={(e) => handleKeyPress(e)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoFocus
+            ref={textInput}
           />
         </div>
       </div>
@@ -173,8 +186,9 @@ const InputForm = () => {
             )
           );
           dispatch(setUserTextInput(userTextInput.concat(e.key)));
+          // the tilde (~) is used as a character that the algo knows to code as an excess letter
           dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
-          dispatch(incrementIncorrectKeys());
+          dispatch(incrementIncorrectKeys(1));
         } else if (e.key === 'Backspace') {
           // When Backspace is pressed but space SHOULD have been pressed
 
@@ -231,8 +245,31 @@ const InputForm = () => {
           )
         );
       } else if (e.key === ' ') {
-        dispatch(setUserTextInput(userTextInput.concat('*')));
-        dispatch(setExcessQuoteToType(excessQuoteToType.concat('*')));
+        // Pressing space will skip to the next word
+
+        // Don't allow pressing space when user is at the beginning of a word or on the last word
+        if (
+          userTextInput.slice(-1) === ' ' ||
+          userTextInput.length == 0 ||
+          logicData.currentWordNumber === duplicateQuoteToType.split(' ').length
+        ) {
+          return;
+        }
+        dispatch(
+          incrementIncorrectKeys(logicData.lettersRemainingInCurrentWord)
+        );
+        // # char indicates a space was pressed before the end of a word
+        let skipToNextWord = '#';
+        for (let i = 0; i < logicData.lettersRemainingInCurrentWord - 1; i++) {
+          // % char is viewed as a skipped character
+          skipToNextWord = skipToNextWord.concat('%');
+        }
+        skipToNextWord = skipToNextWord.concat(' ');
+
+        dispatch(setUserTextInput(userTextInput.concat(skipToNextWord)));
+        dispatch(
+          setExcessQuoteToType(excessQuoteToType.concat(skipToNextWord))
+        );
       } else if (isValidChar(e.key)) {
         dispatch(setUserTextInput(userTextInput.concat(e.key)));
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));

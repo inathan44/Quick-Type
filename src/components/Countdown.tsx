@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { authorizeToken } from '../store/slices/AuthSlice';
+import { CalculateWPM, calculateAccuracy } from '../helperFunctions';
 import { dataState } from '../store/slices/AuthSlice';
 import {
   toggleTimerActive,
@@ -17,6 +18,7 @@ import {
   selectStartingTime,
   adjustWpm,
   adjustAccuracy,
+  selectWpm,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -44,20 +46,17 @@ const Timer = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const useCountdown = useAppSelector(selectUseCountdown);
   const startingTime = useAppSelector(selectStartingTime);
+  const wpm = useAppSelector(selectWpm);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (startingTime / 60);
-    const wpm = +(
-      (totalKeysPressed - incorrectKeys) /
-      5 /
-      (startingTime / 60)
-    ).toFixed(2);
-    const accuracy = +(
-      (totalKeysPressed - incorrectKeys) /
-      totalKeysPressed
-    ).toFixed(2);
 
-    dispatch(adjustWpm(wpm));
+    const accuracy = calculateAccuracy(
+      totalKeysPressed,
+      incorrectKeys,
+      userTextInput
+    );
+
     dispatch(adjustAccuracy(accuracy));
 
     // Dispatch adding the score to the datbase once test is complete (clock hits 0),
