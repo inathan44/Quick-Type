@@ -137,6 +137,7 @@ const InputForm = () => {
           <TypeBoxText />
           <textarea
             value={userTextInput}
+            id="type-test"
             className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0 "
             onChange={() => {}}
             onKeyDown={(e) => handleKeyPress(e)}

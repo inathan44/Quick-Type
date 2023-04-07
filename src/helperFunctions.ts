@@ -52,6 +52,11 @@ function calculateAccuracy(
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+function focusTextArea(): void {
+  const testTextArea = document.getElementById('type-test');
+  testTextArea?.focus();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 interface KeyLogic {
   currentWordNumber: number;
@@ -130,6 +135,7 @@ export {
   remakeQuoteString,
   CalculateWPM,
   calculateAccuracy,
+  focusTextArea,
 };
 
 export const allWordsList = [

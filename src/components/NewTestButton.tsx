@@ -16,6 +16,7 @@ import {
 } from '../store/slices/StatSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
+import { focusTextArea } from '../helperFunctions';
 const NewTestButton = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ const NewTestButton = () => {
         dispatch(
           setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading')
         );
+        focusTextArea();
         navigate('/');
       }}
     >
