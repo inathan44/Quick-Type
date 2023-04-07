@@ -3,6 +3,7 @@ import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import axios from 'axios';
 import { Root } from 'react-dom/client';
 import { RootState } from '..';
+import { allWordsList } from '../../helperFunctions';
 
 export interface QuoteFormat {
   text: string;
@@ -29,6 +30,8 @@ interface InitTypeInputState {
   allQuotes: QuoteFormat[];
   loading: boolean;
   error: string;
+  wordList: string[];
+  numOfWordsToType: number;
 }
 
 const initialState: InitTypeInputState = {
@@ -49,6 +52,8 @@ const initialState: InitTypeInputState = {
   allQuotes: [],
   loading: false,
   error: '',
+  wordList: allWordsList,
+  numOfWordsToType: 20,
 };
 
 export const fetchAllQuotes = createAsyncThunk(
@@ -93,6 +98,18 @@ const typeInputSlice = createSlice({
       state.excessQuoteToType = '';
       state.quoteToType = state.duplicateQuoteToType;
     },
+    setTestWords(state, action: PayloadAction<number>) {
+      state.numOfWordsToType = action.payload;
+    },
+    generateRandomWords(state: InitTypeInputState) {
+      const wordsToGenerate = state.numOfWordsToType;
+      const randomWordList = [];
+      for (let i = 0; i < wordsToGenerate; i++) {
+        randomWordList.push(
+          state.wordList[Math.floor(Math.random() * state.wordList.length)]
+        );
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -118,8 +135,12 @@ export const {
   setDuplicateQuoteToType,
   setUserTextInput,
   resetUserInput,
+  setTestWords,
+  generateRandomWords,
 } = typeInputSlice.actions;
 
+export const selectNumOfWordsToType = (state: RootState) =>
+  state.typeInput.numOfWordsToType;
 export const selectTestComplete = (state: RootState) =>
   state.typeInput.testComplete;
 export const selectQuoteToType = (state: RootState) =>
@@ -133,5 +154,50 @@ export const selectUserTextInput = (state: RootState) =>
 export const selectDuplicateQuoteToType = (state: RootState) =>
   state.typeInput.duplicateQuoteToType;
 export const selectAllQuotes = (state: RootState) => state.typeInput.allQuotes;
+export const selectRandomWords = (state: RootState) => {
+  let wordsToGenerate;
+  if (state.statSlice.useCountdown) {
+    wordsToGenerate = 100;
+  } else {
+    wordsToGenerate = state.typeInput.numOfWordsToType;
+  }
+  const randomWordList = [];
+
+  for (let i = 0; i < wordsToGenerate; i++) {
+    if (state.statSlice.language === 'HTML') {
+      const randomNumber = Math.floor(Math.random() * 100);
+      if (randomNumber > 90) {
+        randomWordList.push(
+          `</${
+            state.typeInput.wordList[
+              Math.floor(Math.random() * state.typeInput.wordList.length)
+            ]
+          }>`
+        );
+      } else if (randomNumber < 10) {
+        randomWordList.push(
+          `<${
+            state.typeInput.wordList[
+              Math.floor(Math.random() * state.typeInput.wordList.length)
+            ]
+          }>`
+        );
+      } else {
+        randomWordList.push(
+          state.typeInput.wordList[
+            Math.floor(Math.random() * state.typeInput.wordList.length)
+          ]
+        );
+      }
+    } else {
+      randomWordList.push(
+        state.typeInput.wordList[
+          Math.floor(Math.random() * state.typeInput.wordList.length)
+        ]
+      );
+    }
+  }
+  return randomWordList;
+};
 
 export default typeInputSlice.reducer;

@@ -14,7 +14,7 @@ const TypeBoxText = () => {
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
 
   const letterColor = (idx: number): string => {
-    if (idx > userTextInput.length - 1) {
+    if (idx > userTextInput.length - 1 || isSkippedLetter(idx)) {
       return '#55848a';
     } else if (isExcessLetter(idx)) {
       return '#f77795';
@@ -25,6 +25,12 @@ const TypeBoxText = () => {
 
   function isExcessLetter(idx: number): boolean {
     if (excessQuoteToType[idx] === '~') return true;
+    return false;
+  }
+
+  function isSkippedLetter(idx: number): boolean {
+    if (excessQuoteToType[idx] === '%' || excessQuoteToType[idx] === '#')
+      return true;
     return false;
   }
 

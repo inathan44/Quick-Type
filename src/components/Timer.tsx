@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { authorizeToken } from '../store/slices/AuthSlice';
 import { dataState } from '../store/slices/AuthSlice';
@@ -11,16 +12,23 @@ import {
   selectIncorrectKeys,
   addNewScore,
   selectUseCountdown,
+  selectWpm,
+  selectAccuracy,
+  adjustWpm,
+  adjustAccuracy,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
   selectQuoteToType,
   selectUserTextInput,
   selectDuplicateQuoteToType,
+  setTestComplete,
 } from '../store/slices/TypeInputSlice';
+import { calculateAccuracy } from '../helperFunctions';
 
 const Timer = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const userData = useAppSelector(dataState);
   const timeElapsed = useAppSelector(selectTimeElapsed);
   const timerActive = useAppSelector(selectTimerActive);
@@ -31,18 +39,18 @@ const Timer = () => {
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
   const useCountdown = useAppSelector(selectUseCountdown);
+  const wpm = useAppSelector(selectWpm);
 
   useEffect(() => {
     const raw = totalKeysPressed / 5 / (timeElapsed / 60);
-    const wpm = +(
-      (totalKeysPressed - incorrectKeys) /
-      5 /
-      (timeElapsed / 60)
-    ).toFixed(2);
-    const accuracy = +(
-      (totalKeysPressed - incorrectKeys) /
-      totalKeysPressed
-    ).toFixed(2);
+
+    const accuracy = calculateAccuracy(
+      totalKeysPressed,
+      incorrectKeys,
+      userTextInput
+    );
+
+    dispatch(adjustAccuracy(accuracy));
 
     // Dispatch adding the score to the datbase once test is complete (user reaches the end of the test),
     // user has typed at least once and we are on countdown mode
@@ -82,6 +90,13 @@ const Timer = () => {
     }
     dispatch(authorizeToken());
   }, [testComplete]);
+
+  useEffect(() => {
+    if (testComplete && userTextInput.length > 0) {
+      navigate('/results');
+      dispatch(setTestComplete(false));
+    }
+  }, [testComplete, userTextInput]);
 
   useEffect(() => {
     if (userTextInput.length > 0 && userTextInput.length < quoteToType.length) {

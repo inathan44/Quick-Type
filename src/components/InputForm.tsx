@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectTestComplete,
@@ -15,6 +15,9 @@ import {
   fetchAllQuotes,
   selectAllQuotes,
   QuoteFormat,
+  selectRandomWords,
+  selectNumOfWordsToType,
+  generateRandomWords,
 } from '../store/slices/TypeInputSlice';
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
@@ -27,16 +30,21 @@ import {
   selectIncorrectKeys,
   selectUseCountdown,
   selectCountdownTimer,
+  selectLanguage,
 } from '../store/slices/StatSlice';
 import Countdown from './Countdown';
 import TestStatHeader from './TestStatHeader';
 import OptionsMenu from './OptionsMenu';
+import { useNavigate } from 'react-router-dom';
 
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
+
+  const [border, setBorder] = useState(false);
+
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
-  const [randomQuoteIndex, setRandomQuoteIndex] = useState<number>(0);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
@@ -45,6 +53,9 @@ const InputForm = () => {
   const excessQuoteToType: string = useAppSelector(selectExcessQuoteToType);
   const userTextInput: string = useAppSelector(selectUserTextInput);
   const countdownTimer = useAppSelector(selectCountdownTimer);
+  const randomWordList = useAppSelector(selectRandomWords);
+  const numOfWordsToType = useAppSelector(selectNumOfWordsToType);
+  const language = useAppSelector(selectLanguage);
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
@@ -58,7 +69,6 @@ const InputForm = () => {
   }
 
   useEffect(() => {
-    setRandomQuoteIndex(Math.floor(Math.random() * 1642));
     dispatch(setUserTextInput(''));
     dispatch(setQuoteToType(duplicateQuoteToType));
     dispatch(setExcessQuoteToType(''));
@@ -66,11 +76,25 @@ const InputForm = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(setQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading'));
+    dispatch(setTestComplete(false));
+    return () => {
+      dispatch(setTestComplete(false));
+    };
+  }, []);
+
+  useEffect(() => {
     dispatch(
-      setDuplicateQuoteToType(allQuotes[randomQuoteIndex]?.text || 'Loading')
+      setQuoteToType(
+        randomWordList.slice(0, numOfWordsToType).join(' ') || 'Loading'
+      )
     );
-  }, [allQuotes, randomQuoteIndex]);
+    dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
+  }, []);
+
+  useEffect(() => {
+    dispatch(setQuoteToType(randomWordList.join(' ') || 'Loading'));
+    dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
+  }, [useCountdown, numOfWordsToType, language]);
 
   useEffect(() => {
     dispatch(setTestComplete(quoteToType.length === userTextInput.length));
@@ -82,9 +106,19 @@ const InputForm = () => {
         quoteToType.charAt(userTextInput.length - 1) &&
       lastKeyPressed !== 'Backspace'
     ) {
-      dispatch(incrementIncorrectKeys());
+      dispatch(incrementIncorrectKeys(1));
     }
   }, [userTextInput, quoteToType]);
+
+  function handleFocus() {
+    setBorder(true);
+  }
+
+  function handleBlur() {
+    setBorder(false);
+  }
+
+  const textInput = useRef(null);
 
   return (
     <>
@@ -95,28 +129,23 @@ const InputForm = () => {
         <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
           Test Complete
         </h1>
-        <div className="relative px-8 py-4 text-3xl mx-auto">
+        <div
+          className={`relative px-8 py-4 text-3xl mx-auto ${
+            border ? 'border-2' : ''
+          }`}
+        >
           <TypeBoxText />
           <textarea
             value={userTextInput}
-            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0"
+            className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0 "
             onChange={() => {}}
             onKeyDown={(e) => handleKeyPress(e)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoFocus
+            ref={textInput}
           />
         </div>
-        <button
-          className="border-2 px-6 py-2 rounded-lg"
-          onClick={() => {
-            dispatch(setUserTextInput(''));
-            dispatch(setQuoteToType(duplicateQuoteToType));
-            dispatch(setExcessQuoteToType(''));
-            dispatch(adjustTime(0));
-            dispatch(resetStats());
-            setRandomQuoteIndex(Math.floor(Math.random() * allQuotes.length));
-          }}
-        >
-          Reset Test
-        </button>
       </div>
     </>
   );
@@ -157,8 +186,9 @@ const InputForm = () => {
             )
           );
           dispatch(setUserTextInput(userTextInput.concat(e.key)));
+          // the tilde (~) is used as a character that the algo knows to code as an excess letter
           dispatch(setExcessQuoteToType(excessQuoteToType.concat('~')));
-          dispatch(incrementIncorrectKeys());
+          dispatch(incrementIncorrectKeys(1));
         } else if (e.key === 'Backspace') {
           // When Backspace is pressed but space SHOULD have been pressed
 
@@ -215,8 +245,31 @@ const InputForm = () => {
           )
         );
       } else if (e.key === ' ') {
-        dispatch(setUserTextInput(userTextInput.concat('*')));
-        dispatch(setExcessQuoteToType(excessQuoteToType.concat('*')));
+        // Pressing space will skip to the next word
+
+        // Don't allow pressing space when user is at the beginning of a word or on the last word
+        if (
+          userTextInput.slice(-1) === ' ' ||
+          userTextInput.length == 0 ||
+          logicData.currentWordNumber === duplicateQuoteToType.split(' ').length
+        ) {
+          return;
+        }
+        dispatch(
+          incrementIncorrectKeys(logicData.lettersRemainingInCurrentWord)
+        );
+        // # char indicates a space was pressed before the end of a word
+        let skipToNextWord = '#';
+        for (let i = 0; i < logicData.lettersRemainingInCurrentWord - 1; i++) {
+          // % char is viewed as a skipped character
+          skipToNextWord = skipToNextWord.concat('%');
+        }
+        skipToNextWord = skipToNextWord.concat(' ');
+
+        dispatch(setUserTextInput(userTextInput.concat(skipToNextWord)));
+        dispatch(
+          setExcessQuoteToType(excessQuoteToType.concat(skipToNextWord))
+        );
       } else if (isValidChar(e.key)) {
         dispatch(setUserTextInput(userTextInput.concat(e.key)));
         dispatch(setExcessQuoteToType(excessQuoteToType.concat(e.key)));

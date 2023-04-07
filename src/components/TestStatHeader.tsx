@@ -10,6 +10,7 @@ import {
   selectUseCountdown,
   selectCountdownTimer,
   selectStartingTime,
+  adjustWpm,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -18,6 +19,7 @@ import {
   selectDuplicateQuoteToType,
 } from '../store/slices/TypeInputSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { CalculateWPM } from '../helperFunctions';
 
 const TestStatHeader = () => {
   const dispatch = useAppDispatch();
@@ -36,29 +38,33 @@ const TestStatHeader = () => {
   const startingTime = useAppSelector(selectStartingTime);
 
   useEffect(() => {
-    if (useCountdown) {
-      if (Number.isInteger(countdownTimer)) {
-        setWpm(
-          +(
-            (totalKeysPressed - incorrectKeys) /
-            5 /
-            ((startingTime - countdownTimer) / 60)
-          ).toFixed(2) || 0
-        );
-      }
-      // console.log('is int?:', Number.isInteger(countdownTimer));
-    } else {
-      if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
-        setWpm(
-          +(
-            (totalKeysPressed - incorrectKeys) /
-            5 /
-            (timeElapsed / 60)
-          ).toFixed(2)
-        );
-      }
-      // console.log('is int?:', Number.isInteger(timeElapsed));
-    }
+    dispatch(
+      adjustWpm(
+        CalculateWPM(
+          useCountdown,
+          totalKeysPressed,
+          incorrectKeys,
+          timeElapsed,
+          countdownTimer,
+          startingTime,
+          userTextInput,
+          wpm
+        )
+      )
+    );
+
+    setWpm(
+      CalculateWPM(
+        useCountdown,
+        totalKeysPressed,
+        incorrectKeys,
+        timeElapsed,
+        countdownTimer,
+        startingTime,
+        userTextInput,
+        wpm
+      )
+    );
   }, [timeElapsed, countdownTimer]);
 
   return (
