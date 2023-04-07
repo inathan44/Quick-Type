@@ -161,8 +161,6 @@ const InputForm = () => {
       quoteToType
     );
 
-    // console.log('logicData', logicData.userTypedWord);
-
     if (quoteToType.length === userTextInput.length) {
       return;
     }
