@@ -34,7 +34,20 @@ function CalculateWPM(
     }
     return wpm;
   }
-  // if (wpm !== 0) console.log('test wpm', wpm);
+}
+////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////
+function calculateAccuracy(
+  totalKeysPressed: number,
+  incorrectKeys: number,
+  userTextInput: string
+): number {
+  const incorrectNonSkipped =
+    incorrectKeys - userTextInput.replace(/[^%]/g, '').length;
+  return +((totalKeysPressed - incorrectNonSkipped) / totalKeysPressed).toFixed(
+    2
+  );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +124,13 @@ function remakeQuoteString(
   return splitQuote.join(' ');
 }
 ////////////////////////////////////////////////////////////////////////////////////
+
+export {
+  deleteExcessLettersData,
+  remakeQuoteString,
+  CalculateWPM,
+  calculateAccuracy,
+};
 
 export const allWordsList = [
   'a',
@@ -1114,5 +1134,3 @@ export const allWordsList = [
   'your',
   'yourself',
 ];
-
-export { deleteExcessLettersData, remakeQuoteString, CalculateWPM };
