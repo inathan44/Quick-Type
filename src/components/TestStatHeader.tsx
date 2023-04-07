@@ -37,8 +37,6 @@ const TestStatHeader = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
 
-  console.log(wpm);
-
   useEffect(() => {
     dispatch(
       adjustWpm(
