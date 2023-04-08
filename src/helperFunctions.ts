@@ -16,18 +16,18 @@ function CalculateWPM(
     .filter((char, idx) => char === quoteToType[idx]).length;
 
   if (useCountdown) {
-    if (Number.isInteger(countdownTimer)) {
-      const dupWpm =
-        +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
+    // if (Number.isInteger(countdownTimer)) {
+    const dupWpm =
+      +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
 
-      return dupWpm;
-    }
+    return dupWpm;
+    // }
     return wpm;
   } else {
-    if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
-      const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
-      return dupWpm;
-    }
+    // if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
+    const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
+    return dupWpm;
+    // }
     return wpm;
   }
 }
