@@ -17,6 +17,7 @@ import {
   selectQuoteToType,
   selectUserTextInput,
   selectDuplicateQuoteToType,
+  selectExcessQuoteToType,
 } from '../store/slices/TypeInputSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { CalculateWPM } from '../helperFunctions';
@@ -36,6 +37,7 @@ const TestStatHeader = () => {
   const useCountdown = useAppSelector(selectUseCountdown);
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
+  const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
 
   useEffect(() => {
     dispatch(
@@ -48,11 +50,15 @@ const TestStatHeader = () => {
           countdownTimer,
           startingTime,
           userTextInput,
-          wpm
+          excessQuoteToType,
+          wpm,
+          quoteToType
         )
       )
     );
+  }, [userTextInput]);
 
+  useEffect(() => {
     setWpm(
       CalculateWPM(
         useCountdown,
@@ -62,7 +68,9 @@ const TestStatHeader = () => {
         countdownTimer,
         startingTime,
         userTextInput,
-        wpm
+        excessQuoteToType,
+        wpm,
+        quoteToType
       )
     );
   }, [timeElapsed, countdownTimer]);
