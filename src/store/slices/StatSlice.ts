@@ -86,8 +86,10 @@ const StatSlice = createSlice({
       state.timerActive = false;
       state.timeElapsed = 0;
       state.incorrectKeys = 0;
+      state.skippedCharacters = 0;
       state.countdownTimer = state.startingTime;
       state.lastTest = undefined;
+      state.wpm = 0;
     },
     incrementIncorrectKeys(state, action: PayloadAction<number>) {
       state.incorrectKeys += action.payload;
