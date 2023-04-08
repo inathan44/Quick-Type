@@ -112,10 +112,18 @@ const InputForm = () => {
 
   function handleFocus() {
     setBorder(true);
+    const cursor = document.getElementById('cursor');
+    if (cursor) {
+      cursor.style.display = 'block';
+    }
   }
 
   function handleBlur() {
     setBorder(false);
+    const cursor = document.getElementById('cursor');
+    if (cursor) {
+      cursor.style.display = 'none';
+    }
   }
 
   const textInput = useRef(null);
@@ -124,13 +132,14 @@ const InputForm = () => {
     <>
       <TestStatHeader />
       <OptionsMenu />
-      <div className="flex flex-col items-center gap-4 text-white">
+      <div className="flex flex-col gap-4 text-white">
         {useCountdown ? <Countdown /> : <Timer />}
         <h1 style={{ visibility: testComplete ? 'visible' : 'hidden' }}>
           Test Complete
         </h1>
         <div
-          className={`relative px-8 py-4 text-3xl mx-auto ${
+          id="test-box"
+          className={`relative px-8 py-4 text-3xl self-start min-w-full h-32 overflow-hidden ${
             border ? 'border-2' : ''
           }`}
         >
