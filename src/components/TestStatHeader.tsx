@@ -11,6 +11,7 @@ import {
   selectCountdownTimer,
   selectStartingTime,
   adjustWpm,
+  selectWpm,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -38,6 +39,7 @@ const TestStatHeader = () => {
   const countdownTimer = useAppSelector(selectCountdownTimer);
   const startingTime = useAppSelector(selectStartingTime);
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
+  const stateWpm = useAppSelector(selectWpm);
 
   useEffect(() => {
     dispatch(
@@ -59,21 +61,41 @@ const TestStatHeader = () => {
   }, [userTextInput]);
 
   useEffect(() => {
-    setWpm(
-      CalculateWPM(
-        useCountdown,
-        totalKeysPressed,
-        incorrectKeys,
-        timeElapsed,
-        countdownTimer,
-        startingTime,
-        userTextInput,
-        excessQuoteToType,
-        wpm,
-        quoteToType
+    dispatch(
+      adjustWpm(
+        CalculateWPM(
+          useCountdown,
+          totalKeysPressed,
+          incorrectKeys,
+          timeElapsed,
+          countdownTimer,
+          startingTime,
+          userTextInput,
+          excessQuoteToType,
+          wpm,
+          quoteToType
+        )
       )
     );
+    if (useCountdown) {
+      if (Number.isInteger(countdownTimer)) {
+        console.log('<><><><><><');
+        console.log('state', stateWpm);
+
+        setWpm(Math.floor(stateWpm));
+      }
+    } else {
+      if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
+        setWpm(Math.floor(stateWpm));
+      }
+    }
   }, [timeElapsed, countdownTimer]);
+
+  useEffect(() => {
+    if (stateWpm === 0) {
+      setWpm(stateWpm);
+    }
+  }, [stateWpm]);
 
   return (
     <div className="flex justify-center text-white gap-16 items-center">
