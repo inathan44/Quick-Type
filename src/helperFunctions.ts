@@ -7,29 +7,25 @@ function CalculateWPM(
   countdownTimer: number,
   startingTime: number,
   userTextInput: string,
-  wpm: number
+  excessQuoteToType: string,
+  wpm: number,
+  quoteToType: string
 ): number {
-  const incorrectNonSkipped =
-    incorrectKeys - userTextInput.replace(/[^%]/g, '').length;
+  const correct = excessQuoteToType
+    .split('')
+    .filter((char, idx) => char === quoteToType[idx]).length;
+
   if (useCountdown) {
     if (Number.isInteger(countdownTimer)) {
       const dupWpm =
-        +(
-          (totalKeysPressed - incorrectNonSkipped) /
-          5 /
-          ((startingTime - countdownTimer) / 60)
-        ).toFixed(2) || 0;
+        +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
 
       return dupWpm;
     }
     return wpm;
   } else {
     if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
-      const dupWpm = +(
-        (totalKeysPressed - incorrectNonSkipped) /
-        5 /
-        (timeElapsed / 60)
-      ).toFixed(2);
+      const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
       return dupWpm;
     }
     return wpm;
