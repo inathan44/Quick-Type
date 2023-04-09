@@ -17,6 +17,8 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
 import { focusTextArea } from '../helperFunctions';
+import { resetFormatState } from '../store/slices/formatSlice';
+
 const NewTestButton = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ const NewTestButton = () => {
         dispatch(
           setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading')
         );
+        dispatch(resetFormatState());
         focusTextArea();
         navigate('/');
       }}
