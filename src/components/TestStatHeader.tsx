@@ -79,9 +79,6 @@ const TestStatHeader = () => {
     );
     if (useCountdown) {
       if (Number.isInteger(countdownTimer)) {
-        console.log('<><><><><><');
-        console.log('state', stateWpm);
-
         setWpm(Math.floor(stateWpm));
       }
     } else {

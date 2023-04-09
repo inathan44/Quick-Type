@@ -26,13 +26,15 @@ const TypeBoxText = () => {
     setCursorXPos(xPos || 313.5);
     const yPos =
       quote?.children[userTextInput.length]?.getBoundingClientRect().y;
+    console.log('y', yPos);
     setCursorYPos(yPos || 378);
   }, [userTextInput]);
 
   useEffect(() => {
     const quote = document.getElementById('quote');
-    console.log('yyyyy', cursorYPos);
-    setTranslate(cursorYPos - 36);
+    setTranslate(translate - 36);
+    setTranslate(translate + 36);
+    if (quote) quote.style.transform = `translate(0,${translate}px)`;
   }, [cursorYPos]);
 
   const letterColor = (idx: number): string => {
@@ -64,6 +66,7 @@ const TypeBoxText = () => {
             key={idx}
             style={{
               color: letterColor(idx),
+              transform: `translate(0,25px)`,
             }}
           >
             {char}
