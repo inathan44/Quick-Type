@@ -1,14 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 function CalculateWPM(
   useCountdown: boolean,
-  totalKeysPressed: number,
-  incorrectKeys: number,
   timeElapsed: number,
   countdownTimer: number,
   startingTime: number,
-  userTextInput: string,
   excessQuoteToType: string,
-  wpm: number,
   quoteToType: string
 ): number {
   const correct = excessQuoteToType
@@ -16,19 +12,12 @@ function CalculateWPM(
     .filter((char, idx) => char === quoteToType[idx]).length;
 
   if (useCountdown) {
-    // if (Number.isInteger(countdownTimer)) {
     const dupWpm =
       +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
-
     return dupWpm;
-    // }
-    return wpm;
   } else {
-    // if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
     const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
     return dupWpm;
-    // }
-    return wpm;
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +43,7 @@ function focusTextArea(): void {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-interface KeyLogic {
+export interface KeyLogic {
   currentWordNumber: number;
   userInputWordLength: number;
   quoteWordLength: number;
