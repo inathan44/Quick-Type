@@ -20,7 +20,7 @@ interface KeyLogic {
   splitQuote: string[];
 }
 
-interface InitTypeInputState {
+export interface InitTypeInputState {
   duplicateQuoteToType: string;
   quoteToType: string;
   userTextInput: string;
