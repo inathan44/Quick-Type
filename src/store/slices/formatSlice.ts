@@ -16,7 +16,7 @@ const formatSlice = createSlice({
       state.translate = 0;
     },
     adjustTranslate(state: formatInitState, action: PayloadAction<number>) {
-      state.translate += action.payload;
+      state.translate = action.payload;
     },
   },
 });
