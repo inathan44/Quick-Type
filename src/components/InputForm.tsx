@@ -139,7 +139,7 @@ const InputForm = () => {
         </h1>
         <div
           id="test-box"
-          className={`relative px-8 py-4 text-3xl self-start border-2 min-w-full h-32 overflow-hidden ${
+          className={`relative px-8 text-3xl self-start border-2 min-w-full h-28 overflow-hidden ${
             border ? '' : 'border-transparent'
           }`}
         >
