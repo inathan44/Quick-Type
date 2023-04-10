@@ -54,7 +54,7 @@ const OptionsMenu = () => {
   });
   const [words, setWords] = useState<WordState>({
     activeWords: 20,
-    words: [{ id: 20 }, { id: 50 }, { id: 100 }],
+    words: [{ id: 10 }, { id: 20 }, { id: 50 }],
   });
 
   useEffect(() => {

@@ -1,8 +1,11 @@
 import React, { ReactNode, MouseEventHandler } from 'react';
 import { Languages, Mode } from './OptionsMenu';
 import { selectUseCountdown, changeMode } from '../store/slices/StatSlice';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { useDispatch } from 'react-redux';
+import { focusTextArea } from '../helperFunctions';
+import { selectUserTextInput } from '../store/slices/TypeInputSlice';
+import { resetFormatState } from '../store/slices/formatSlice';
 
 interface ButtonProps {
   children: ReactNode;
@@ -11,12 +14,14 @@ interface ButtonProps {
 }
 
 const OptionButton = (props: ButtonProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   return (
     <button
       onClick={() => {
         props.clickFunc(props.id);
+        focusTextArea();
+        dispatch(resetFormatState());
       }}
       className="border-2 px-2 py-1 rounded-lg text-sm text-gray-300 border-gray-300"
     >

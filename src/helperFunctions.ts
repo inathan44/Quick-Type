@@ -7,31 +7,27 @@ function CalculateWPM(
   countdownTimer: number,
   startingTime: number,
   userTextInput: string,
-  wpm: number
+  excessQuoteToType: string,
+  wpm: number,
+  quoteToType: string
 ): number {
-  const incorrectNonSkipped =
-    incorrectKeys - userTextInput.replace(/[^%]/g, '').length;
-  if (useCountdown) {
-    if (Number.isInteger(countdownTimer)) {
-      const dupWpm =
-        +(
-          (totalKeysPressed - incorrectNonSkipped) /
-          5 /
-          ((startingTime - countdownTimer) / 60)
-        ).toFixed(2) || 0;
+  const correct = excessQuoteToType
+    .split('')
+    .filter((char, idx) => char === quoteToType[idx]).length;
 
-      return dupWpm;
-    }
+  if (useCountdown) {
+    // if (Number.isInteger(countdownTimer)) {
+    const dupWpm =
+      +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
+
+    return dupWpm;
+    // }
     return wpm;
   } else {
-    if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
-      const dupWpm = +(
-        (totalKeysPressed - incorrectNonSkipped) /
-        5 /
-        (timeElapsed / 60)
-      ).toFixed(2);
-      return dupWpm;
-    }
+    // if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
+    const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
+    return dupWpm;
+    // }
     return wpm;
   }
 }
@@ -51,6 +47,11 @@ function calculateAccuracy(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+function focusTextArea(): void {
+  const testTextArea = document.getElementById('type-test');
+  testTextArea?.focus();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 interface KeyLogic {
@@ -130,6 +131,7 @@ export {
   remakeQuoteString,
   CalculateWPM,
   calculateAccuracy,
+  focusTextArea,
 };
 
 export const allWordsList = [
@@ -896,8 +898,6 @@ export const allWordsList = [
   'set',
   'seven',
   'several',
-  'sex',
-  'sexual',
   'shake',
   'share',
   'she',
