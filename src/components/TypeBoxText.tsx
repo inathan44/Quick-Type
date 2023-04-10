@@ -51,14 +51,7 @@ const TypeBoxText = () => {
 
       if (lastLine) return;
     }
-
-    console.log(
-      'STARTING_QUOTE_Y - last letter pos y',
-      STARTING_QUOTE_Y - lastLetterPosition
-    );
-    console.log('line height', -LINE_HEIGHT);
     if (STARTING_QUOTE_Y - lastLetterPosition < -LINE_HEIGHT) {
-      console.log('<><><<');
       const newPosition = STARTING_QUOTE_Y - lastLetterPosition + LINE_HEIGHT;
       if (yPos) setCursorYPos(yPos + newPosition);
       dispatch(adjustTranslate(newPosition));
