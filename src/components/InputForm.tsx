@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { keyPress } from '../keyPressFunction';
 import {
   selectTestComplete,
   setTestComplete,
@@ -185,7 +186,7 @@ const InputForm = () => {
     const nextCharIsSpace = quoteToType[userTextInput.length] === ' ';
     // If the character that we are typing is supposed to be a space
     if (nextCharIsSpace) {
-      // If the character IS NOT a space, adjust the quote to reflect the mistyped extra letters
+      // If the character typed IS NOT a space, adjust the quote to reflect the mistyped extra letters
       if (e.key !== ' ') {
         if (isValidChar(e.key)) {
           dispatch(
@@ -246,14 +247,44 @@ const InputForm = () => {
       }
     } else {
       if (e.key === 'Backspace') {
-        dispatch(
-          setUserTextInput(userTextInput.slice(0, userTextInput.length - 1))
-        );
-        dispatch(
-          setExcessQuoteToType(
-            excessQuoteToType.slice(0, excessQuoteToType.length - 1)
-          )
-        );
+        if (
+          // Delete all skipped letters when deleting to a prev word
+          excessQuoteToType.slice(-2, -1) === '%' ||
+          excessQuoteToType.slice(-2, -1) === '#'
+        ) {
+          let lastLetterIndex = excessQuoteToType.length - 2;
+          let lettersToDelete = 1;
+          while (
+            excessQuoteToType[lastLetterIndex] === '%' ||
+            excessQuoteToType[lastLetterIndex] === '#'
+          ) {
+            lastLetterIndex--;
+            lettersToDelete++;
+          }
+
+          dispatch(
+            setUserTextInput(
+              userTextInput.slice(0, userTextInput.length - lettersToDelete)
+            )
+          );
+          dispatch(
+            setExcessQuoteToType(
+              excessQuoteToType.slice(
+                0,
+                excessQuoteToType.length - lettersToDelete
+              )
+            )
+          );
+        } else {
+          dispatch(
+            setUserTextInput(userTextInput.slice(0, userTextInput.length - 1))
+          );
+          dispatch(
+            setExcessQuoteToType(
+              excessQuoteToType.slice(0, excessQuoteToType.length - 1)
+            )
+          );
+        }
       } else if (e.key === ' ') {
         // Pressing space will skip to the next word
 
