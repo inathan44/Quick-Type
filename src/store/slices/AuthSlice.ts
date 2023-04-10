@@ -59,6 +59,7 @@ export const authorizeToken = createAsyncThunk(
   'AuthorizeToeken',
   async (x, { rejectWithValue }) => {
     try {
+      return;
       const token = localStorage.getItem('token');
       if (!token) return {};
       const { data } = await axios.get(
@@ -101,7 +102,7 @@ const AuthSlice = createSlice({
     });
     builder.addCase(authorizeToken.fulfilled, (state, { payload }) => {
       state.loading = false;
-      state.data = payload.data;
+      // state.data = payload.data;
       state.token = '';
       state.error = '';
     });
@@ -132,5 +133,6 @@ const AuthSlice = createSlice({
 export const {} = AuthSlice.actions;
 
 export const dataState = (state: any) => state.auth.data;
+export const rejectedState = (state: any) => state.auth.error;
 
 export default AuthSlice.reducer;

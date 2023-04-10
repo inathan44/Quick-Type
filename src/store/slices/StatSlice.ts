@@ -28,9 +28,11 @@ interface InitStatState {
   startingTime: number;
   countdownTimer: number;
   useCountdown: boolean;
-  wordNumber: number;
   language: Language;
   lastTest?: Stat;
+  wpm: number;
+  accuracy: number;
+  skippedCharacters: number;
 }
 
 const initialState: InitStatState = {
@@ -41,8 +43,10 @@ const initialState: InitStatState = {
   countdownTimer: 30,
   startingTime: 30,
   useCountdown: false,
-  wordNumber: 20,
   language: 'English',
+  wpm: 0,
+  accuracy: 0,
+  skippedCharacters: 0,
 };
 
 export const addNewScore = createAsyncThunk(
@@ -82,17 +86,20 @@ const StatSlice = createSlice({
       state.timerActive = false;
       state.timeElapsed = 0;
       state.incorrectKeys = 0;
+      state.skippedCharacters = 0;
       state.countdownTimer = state.startingTime;
+      state.lastTest = undefined;
+      state.wpm = 0;
     },
-    incrementIncorrectKeys(state) {
-      state.incorrectKeys++;
+    incrementIncorrectKeys(state, action: PayloadAction<number>) {
+      state.incorrectKeys += action.payload;
+    },
+    incrementSkippedCharacters(state, action: PayloadAction<number>) {
+      state.skippedCharacters += action.payload;
     },
     setTestTime(state, action: PayloadAction<number>) {
       state.countdownTimer = action.payload;
       state.startingTime = action.payload;
-    },
-    setTestWords(state, action: PayloadAction<number>) {
-      state.wordNumber = action.payload;
     },
     changeTestLangauge(state, action: PayloadAction<Language>) {
       state.language = action.payload;
@@ -104,6 +111,12 @@ const StatSlice = createSlice({
       } else if (action.payload === 'Words') {
         state.useCountdown = false;
       }
+    },
+    adjustWpm(state, action: PayloadAction<number>) {
+      state.wpm = action.payload;
+    },
+    adjustAccuracy(state, action: PayloadAction<number>) {
+      state.accuracy = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -126,8 +139,9 @@ export const {
   adjustCountdown,
   changeMode,
   setTestTime,
-  setTestWords,
   changeTestLangauge,
+  adjustWpm,
+  adjustAccuracy,
 } = StatSlice.actions;
 
 export const selectTimeElapsed = (state: RootState) =>
@@ -144,5 +158,8 @@ export const selectUseCountdown = (state: RootState) =>
   state.statSlice.useCountdown;
 export const selectStartingTime = (state: RootState) =>
   state.statSlice.startingTime;
-
+export const selectLanguage = (state: RootState) => state.statSlice.language;
+export const selectWpm = (state: RootState) => state.statSlice.wpm;
+export const selectAccuracy = (state: RootState) => state.statSlice.accuracy;
+export const selectLastTest = (state: RootState) => state.statSlice.lastTest;
 export default StatSlice.reducer;

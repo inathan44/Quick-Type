@@ -12,7 +12,7 @@ const NavBar = () => {
 
   useEffect(() => {
     // checks the token on reload and adds user data to the state for posting later
-    dispatch(authorizeToken());
+    // dispatch(authorizeToken());
   }, []);
 
   return (
@@ -33,6 +33,8 @@ const NavBar = () => {
             altText="Bar chart icon"
             link="/Leaderboards"
           />
+          {/* <NavLink link="/login" linkName="Login" />
+          <NavLink link="/signup" linkName="Signup" /> */}
           <NavLink
             linkName="Account"
             imgUrl={accountIcon}

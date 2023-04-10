@@ -19,7 +19,7 @@ const Signup = () => {
   };
   return (
     <div>
-      <form id="form1" onSubmit={handleSubmit}>
+      <form className="text-black" id="form1" onSubmit={handleSubmit}>
         <label className="text-white block"> USERNAME</label>
         <input
           type="text"

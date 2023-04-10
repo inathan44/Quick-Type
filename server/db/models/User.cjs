@@ -57,6 +57,7 @@ User.prototype.createToken = async function (user) {
     return 'User.id is not valid';
   }
 };
+
 User.findByToken = async function (token) {
   try {
     const { id } = await jwt.verify(token, process.env.JWT);

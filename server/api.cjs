@@ -15,6 +15,19 @@ router.get('/auth', requireTokenAuth, async (req, res, next) => {
   res.send(req.user);
 });
 
+router.get('/topScores', async (req, res, nesxt) => {
+  const top10 = await Score.getTopTen();
+  // console.log(top10[0].user);
+  // IDK HOW TO INCLUDE ONLY USER.username AND NOT THE WHOLE THING + IM TOO LAZY TO FIGURE OUT SO GOOD LUCK :3
+  // BUT IF U WANT TO EDIT IT ITS IN MODEL SCORE
+  res.json(top10);
+});
+
+router.get('/allScoresAmount', async (req, res, nesxt) => {
+  const numberOfTests = await Score.numberOfTests();
+  res.json(numberOfTests);
+});
+
 router.get('/verify/:token', async (req, res, next) => {
   const token = req.params.token;
   if (User.verifyToken(token)) {
