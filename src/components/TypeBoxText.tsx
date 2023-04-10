@@ -7,41 +7,67 @@ import {
   selectDuplicateQuoteToType,
 } from '../store/slices/TypeInputSlice';
 import { selectUseCountdown } from '../store/slices/StatSlice';
-import { adjustTranslate } from '../store/slices/formatSlice';
+import { adjustTranslate, resetFormatState } from '../store/slices/formatSlice';
 
 // const LINE_HEIGHT = import.meta.env.MODE === 'development' ? 18 : 36;
-const LINE_HEIGHT = 18;
+const LINE_HEIGHT = 36;
 
 const TypeBoxText = () => {
+  const quote = document.getElementById('quote-hidden');
+
+  const STARTING_QUOTE_Y = quote?.getBoundingClientRect().y || 362;
   const dispatch = useAppDispatch();
 
-  const [cursorXPos, setCursorXPos] = useState(313.5);
+  const [cursorXPos, setCursorXPos] = useState(257);
+  const [cursorYPos, setCursorYPos] = useState(STARTING_QUOTE_Y);
   const translate = useAppSelector((state) => state.format.translate);
-  const [lastLetterPosition, setLastLetterPosition] = useState(362);
+  const [lastLetterPosition, setLastLetterPosition] =
+    useState(STARTING_QUOTE_Y);
 
   const quoteToType = useAppSelector(selectQuoteToType);
   const userTextInput = useAppSelector(selectUserTextInput);
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
-  const useCountdown = useAppSelector(selectUseCountdown);
+  const yPos = quote?.children[userTextInput.length]?.getBoundingClientRect().y;
 
   useEffect(() => {
-    const quote = document.getElementById('quote-hidden');
     const xPos =
-      quote?.children[userTextInput.length]?.getBoundingClientRect().x;
+      quote?.children[userTextInput.length]?.getBoundingClientRect().x || 257;
     if (xPos) {
       setCursorXPos(xPos);
     }
-    const yPos =
-      quote?.children[userTextInput.length]?.getBoundingClientRect().y;
-    if (yPos) setLastLetterPosition(yPos);
+
+    if (yPos) {
+      setCursorYPos(yPos + translate);
+      setLastLetterPosition(yPos);
+    }
   }, [userTextInput]);
 
   useEffect(() => {
-    dispatch(adjustTranslate(-LINE_HEIGHT));
-    console.log('dispatch should have ran');
-    const quote = document.getElementById('quote');
-    if (quote) quote.style.transform = `translate(0,${translate}px)`;
+    const quote = document.getElementById('quote-hidden');
+    if (quote) {
+      const lastLine =
+        quote?.getBoundingClientRect().bottom ===
+        quote?.children[userTextInput.length]?.getBoundingClientRect().y + 36;
+
+      if (lastLine) return;
+    }
+
+    console.log(
+      'STARTING_QUOTE_Y - last letter pos y',
+      STARTING_QUOTE_Y - lastLetterPosition
+    );
+    console.log('line height', -LINE_HEIGHT);
+    if (STARTING_QUOTE_Y - lastLetterPosition < -LINE_HEIGHT) {
+      console.log('<><><<');
+      const newPosition = STARTING_QUOTE_Y - lastLetterPosition + LINE_HEIGHT;
+      if (yPos) setCursorYPos(yPos + newPosition);
+      dispatch(adjustTranslate(newPosition));
+    }
   }, [lastLetterPosition]);
+
+  useEffect(() => {
+    dispatch(resetFormatState());
+  }, []);
 
   const letterColor = (idx: number): string => {
     if (idx > userTextInput.length - 1 || isSkippedLetter(idx)) {
@@ -67,7 +93,7 @@ const TypeBoxText = () => {
   return (
     <>
       <div className="absolute top-0 pr-8">
-        <p id="quote-hidden" className="opacity-10">
+        <p id="quote-hidden" className="opacity-0">
           {quoteToType.split('').map((char: string, idx: number) => (
             <span
               key={idx}
@@ -80,7 +106,11 @@ const TypeBoxText = () => {
           ))}
         </p>
       </div>
-      <p id="quote" className="relative">
+      <p
+        id="quote"
+        className=""
+        style={{ transform: `translate(0,${translate}px)` }}
+      >
         {quoteToType.split('').map((char: string, idx: number) => (
           <span
             key={idx}
@@ -94,10 +124,10 @@ const TypeBoxText = () => {
       </p>
       <p
         id="cursor"
-        className={`absolute transition-all text-yellow-400 animate-[cursor-blink_2s_infinite]`}
+        className={`absolute transition-all duration-[100ms] ease-in-out text-yellow-400 animate-[cursor-blink_2s_infinite]`}
         style={{
-          left: `${cursorXPos - 287}px`,
-          top: `${15}px`,
+          left: `${cursorXPos - 228}px`,
+          top: `${cursorYPos - STARTING_QUOTE_Y}px`,
         }}
       >
         |
