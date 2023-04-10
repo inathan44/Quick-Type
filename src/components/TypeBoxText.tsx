@@ -5,20 +5,22 @@ import {
   selectUserTextInput,
   selectExcessQuoteToType,
   selectDuplicateQuoteToType,
+  setUserTextInput,
 } from '../store/slices/TypeInputSlice';
 import { selectUseCountdown } from '../store/slices/StatSlice';
 import { adjustTranslate, resetFormatState } from '../store/slices/formatSlice';
 
-// const LINE_HEIGHT = import.meta.env.MODE === 'development' ? 18 : 36;
 const LINE_HEIGHT = 36;
+const TEXT_PADDDING_X = 32;
 
 const TypeBoxText = () => {
-  const quote = document.getElementById('quote-hidden');
-
-  const STARTING_QUOTE_Y = quote?.getBoundingClientRect().y || 362;
   const dispatch = useAppDispatch();
 
-  const [cursorXPos, setCursorXPos] = useState(257);
+  const quote = document.getElementById('quote-hidden');
+  const STARTING_QUOTE_Y = quote?.getBoundingClientRect().y || 362;
+  const STARTING_QUOTE_X = quote?.getBoundingClientRect().x || 250;
+
+  const [cursorXPos, setCursorXPos] = useState(STARTING_QUOTE_X);
   const [cursorYPos, setCursorYPos] = useState(STARTING_QUOTE_Y);
   const translate = useAppSelector((state) => state.format.translate);
   const [lastLetterPosition, setLastLetterPosition] =
@@ -28,10 +30,9 @@ const TypeBoxText = () => {
   const userTextInput = useAppSelector(selectUserTextInput);
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
   const yPos = quote?.children[userTextInput.length]?.getBoundingClientRect().y;
+  const xPos = quote?.children[userTextInput.length]?.getBoundingClientRect().x;
 
   useEffect(() => {
-    const xPos =
-      quote?.children[userTextInput.length]?.getBoundingClientRect().x || 257;
     if (xPos) {
       setCursorXPos(xPos);
     }
@@ -51,14 +52,7 @@ const TypeBoxText = () => {
 
       if (lastLine) return;
     }
-
-    console.log(
-      'STARTING_QUOTE_Y - last letter pos y',
-      STARTING_QUOTE_Y - lastLetterPosition
-    );
-    console.log('line height', -LINE_HEIGHT);
     if (STARTING_QUOTE_Y - lastLetterPosition < -LINE_HEIGHT) {
-      console.log('<><><<');
       const newPosition = STARTING_QUOTE_Y - lastLetterPosition + LINE_HEIGHT;
       if (yPos) setCursorYPos(yPos + newPosition);
       dispatch(adjustTranslate(newPosition));
@@ -67,6 +61,13 @@ const TypeBoxText = () => {
 
   useEffect(() => {
     dispatch(resetFormatState());
+    setTimeout(() => {
+      const quote = document.getElementById('quote-hidden');
+      if (quote)
+        setCursorXPos(
+          quote?.children[userTextInput.length]?.getBoundingClientRect().x
+        );
+    }, 0);
   }, []);
 
   const letterColor = (idx: number): string => {
@@ -126,7 +127,7 @@ const TypeBoxText = () => {
         id="cursor"
         className={`absolute transition-all duration-[100ms] ease-in-out text-yellow-400 animate-[cursor-blink_2s_infinite]`}
         style={{
-          left: `${cursorXPos - 228}px`,
+          left: `${cursorXPos - STARTING_QUOTE_X + TEXT_PADDDING_X}px`,
           top: `${cursorYPos - STARTING_QUOTE_Y}px`,
         }}
       >
