@@ -46,14 +46,10 @@ const TestStatHeader = () => {
       adjustWpm(
         CalculateWPM(
           useCountdown,
-          totalKeysPressed,
-          incorrectKeys,
           timeElapsed,
           countdownTimer,
           startingTime,
-          userTextInput,
           excessQuoteToType,
-          wpm,
           quoteToType
         )
       )
@@ -65,14 +61,10 @@ const TestStatHeader = () => {
       adjustWpm(
         CalculateWPM(
           useCountdown,
-          totalKeysPressed,
-          incorrectKeys,
           timeElapsed,
           countdownTimer,
           startingTime,
-          userTextInput,
           excessQuoteToType,
-          wpm,
           quoteToType
         )
       )
