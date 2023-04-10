@@ -5,11 +5,36 @@ function CalculateWPM(
   countdownTimer: number,
   startingTime: number,
   excessQuoteToType: string,
-  quoteToType: string
+  quoteToType: string,
+  duplicateQuoteToType: string,
+  userTextInput: string
 ): number {
-  const correct = excessQuoteToType
-    .split('')
-    .filter((char, idx) => char === quoteToType[idx]).length;
+  const logicData = deleteExcessLettersData(
+    userTextInput,
+    duplicateQuoteToType,
+    quoteToType
+  );
+
+  const correct =
+    excessQuoteToType.split('').filter((char, idx) => char === quoteToType[idx])
+      .length -
+    excessQuoteToType.split('').filter((char) => char === '#').length;
+
+  console.log(
+    'correct current word',
+    duplicateQuoteToType.split(' ')[logicData.currentWordNumber - 1]
+  );
+  console.log(
+    'Correct Words:',
+    excessQuoteToType
+      .split(' ')
+      .filter(
+        (word, idx) =>
+          word !== duplicateQuoteToType.split(' ')[idx] &&
+          idx !== logicData.currentWordNumber - 1
+      )
+      .join(' ').length
+  );
 
   if (useCountdown) {
     const dupWpm =

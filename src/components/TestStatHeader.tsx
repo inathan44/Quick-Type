@@ -50,7 +50,9 @@ const TestStatHeader = () => {
           countdownTimer,
           startingTime,
           excessQuoteToType,
-          quoteToType
+          quoteToType,
+          duplicateQuoteToType,
+          userTextInput
         )
       )
     );
@@ -65,7 +67,9 @@ const TestStatHeader = () => {
           countdownTimer,
           startingTime,
           excessQuoteToType,
-          quoteToType
+          quoteToType,
+          duplicateQuoteToType,
+          userTextInput
         )
       )
     );
