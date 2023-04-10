@@ -112,8 +112,8 @@ const Timer = () => {
     let interval: any = null;
     if (timerActive) {
       interval = setInterval(() => {
-        dispatch(adjustTime(timeElapsed + 0.1));
-      }, 100);
+        dispatch(adjustTime(timeElapsed + 0.5));
+      }, 500);
     } else if (!timerActive && timeElapsed !== 0) {
       clearInterval(interval);
     }
