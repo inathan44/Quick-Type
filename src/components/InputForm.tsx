@@ -74,22 +74,16 @@ const InputForm = () => {
     dispatch(setQuoteToType(duplicateQuoteToType));
     dispatch(setExcessQuoteToType(''));
     dispatch(fetchAllQuotes());
-  }, []);
-
-  useEffect(() => {
-    dispatch(setTestComplete(false));
-    return () => {
-      dispatch(setTestComplete(false));
-    };
-  }, []);
-
-  useEffect(() => {
     dispatch(
       setQuoteToType(
         randomWordList.slice(0, numOfWordsToType).join(' ') || 'Loading'
       )
     );
     dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
+    dispatch(setTestComplete(false));
+    return () => {
+      dispatch(setTestComplete(false));
+    };
   }, []);
 
   useEffect(() => {
