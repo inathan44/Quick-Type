@@ -12,7 +12,7 @@ const NavBar = () => {
 
   useEffect(() => {
     // checks the token on reload and adds user data to the state for posting later
-    dispatch(authorizeToken());
+    // dispatch(authorizeToken());
   }, []);
 
   return (

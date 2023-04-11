@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Root } from 'react-dom/client';
 import { RootState } from '..';
 import { allWordsList } from '../../helperFunctions';
+import { generateTest } from '../../helperFunctions';
 
 export interface QuoteFormat {
   text: string;
@@ -20,7 +21,7 @@ interface KeyLogic {
   splitQuote: string[];
 }
 
-interface InitTypeInputState {
+export interface InitTypeInputState {
   duplicateQuoteToType: string;
   quoteToType: string;
   userTextInput: string;
@@ -155,49 +156,7 @@ export const selectDuplicateQuoteToType = (state: RootState) =>
   state.typeInput.duplicateQuoteToType;
 export const selectAllQuotes = (state: RootState) => state.typeInput.allQuotes;
 export const selectRandomWords = (state: RootState) => {
-  let wordsToGenerate;
-  if (state.statSlice.useCountdown) {
-    wordsToGenerate = 100;
-  } else {
-    wordsToGenerate = state.typeInput.numOfWordsToType;
-  }
-  const randomWordList = [];
-
-  for (let i = 0; i < wordsToGenerate; i++) {
-    if (state.statSlice.language === 'HTML') {
-      const randomNumber = Math.floor(Math.random() * 100);
-      if (randomNumber > 90) {
-        randomWordList.push(
-          `</${
-            state.typeInput.wordList[
-              Math.floor(Math.random() * state.typeInput.wordList.length)
-            ]
-          }>`
-        );
-      } else if (randomNumber < 10) {
-        randomWordList.push(
-          `<${
-            state.typeInput.wordList[
-              Math.floor(Math.random() * state.typeInput.wordList.length)
-            ]
-          }>`
-        );
-      } else {
-        randomWordList.push(
-          state.typeInput.wordList[
-            Math.floor(Math.random() * state.typeInput.wordList.length)
-          ]
-        );
-      }
-    } else {
-      randomWordList.push(
-        state.typeInput.wordList[
-          Math.floor(Math.random() * state.typeInput.wordList.length)
-        ]
-      );
-    }
-  }
-  return randomWordList;
+  return generateTest(state);
 };
 
 export default typeInputSlice.reducer;

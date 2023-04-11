@@ -118,8 +118,8 @@ const Timer = () => {
     let interval: any = null;
     if (timerActive) {
       interval = setInterval(() => {
-        dispatch(adjustCountdown(countdownTimer - 0.1));
-      }, 100);
+        dispatch(adjustCountdown(countdownTimer - 0.5));
+      }, 500);
     } else if (!timerActive && timeElapsed !== 0) {
       clearInterval(interval);
     }
