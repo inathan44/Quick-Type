@@ -127,8 +127,8 @@ const TypeBoxText = () => {
         id="cursor"
         className={`absolute transition-all duration-[100ms] ease-in-out text-yellow-400 animate-[cursor-blink_2s_infinite]`}
         style={{
-          left: `${cursorXPos - STARTING_QUOTE_X + TEXT_PADDDING_X}px`,
-          top: `${cursorYPos - STARTING_QUOTE_Y}px`,
+          left: `${cursorXPos - STARTING_QUOTE_X + TEXT_PADDDING_X - 5}px`,
+          top: `${cursorYPos - STARTING_QUOTE_Y - 2}px`,
         }}
       >
         |

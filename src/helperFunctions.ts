@@ -1,37 +1,70 @@
+import { RootState } from './store';
+
 ////////////////////////////////////////////////////////////////////////////////////
 function CalculateWPM(
   useCountdown: boolean,
-  totalKeysPressed: number,
-  incorrectKeys: number,
   timeElapsed: number,
   countdownTimer: number,
   startingTime: number,
-  userTextInput: string,
   excessQuoteToType: string,
-  wpm: number,
-  quoteToType: string
+  quoteToType: string,
+  duplicateQuoteToType: string,
+  userTextInput: string
 ): number {
-  const correct = excessQuoteToType
-    .split('')
-    .filter((char, idx) => char === quoteToType[idx]).length;
+  const correct = calculateCorrectCharacters(
+    excessQuoteToType,
+    quoteToType,
+    duplicateQuoteToType,
+    userTextInput
+  );
 
   if (useCountdown) {
-    // if (Number.isInteger(countdownTimer)) {
     const dupWpm =
       +(correct / 5 / ((startingTime - countdownTimer) / 60)).toFixed(2) || 0;
-
     return dupWpm;
-    // }
-    return wpm;
   } else {
-    // if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
     const dupWpm = +(correct / 5 / (timeElapsed / 60)).toFixed(2);
     return dupWpm;
-    // }
-    return wpm;
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////
+
+function calculateCorrectCharacters(
+  excessQuoteToType: string,
+  quoteToType: string,
+  duplicateQuoteToType: string,
+  userTextInput: string
+): number {
+  const logicData = deleteExcessLettersData(
+    userTextInput,
+    duplicateQuoteToType,
+    quoteToType
+  );
+
+  const numOfIncorrectCharsInWord = incorrectCharsInCurrentWord(
+    logicData.reassignWord,
+    logicData.currentWordNumber - 1,
+    excessQuoteToType
+  );
+
+  const allLettersTyped = excessQuoteToType.length;
+  const timesSkipped = excessQuoteToType?.match(/[#]/g)?.length;
+  const lettersInMispelledWords = excessQuoteToType
+    .split(' ')
+    .filter(
+      (word, idx) =>
+        word !== duplicateQuoteToType.split(' ')[idx] &&
+        idx !== logicData.currentWordNumber - 1
+    )
+    .join('').length;
+
+  return (
+    allLettersTyped -
+    (timesSkipped || 0) -
+    lettersInMispelledWords -
+    numOfIncorrectCharsInWord
+  );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 function calculateAccuracy(
@@ -40,10 +73,37 @@ function calculateAccuracy(
   userTextInput: string
 ): number {
   const incorrectNonSkipped =
+    // Regex finds '%' char which represents letters that were skipped by pressing space early on a word, which shouldn't count towards incorrect letters
     incorrectKeys - userTextInput.replace(/[^%]/g, '').length;
   return +((totalKeysPressed - incorrectNonSkipped) / totalKeysPressed).toFixed(
     2
   );
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function calculateRaw(totalKeysPressed: number, time: number): number {
+  const raw = +(totalKeysPressed / 5 / (time / 60)).toFixed(2);
+  return raw;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+function incorrectCharsInCurrentWord(
+  reassignWord: string,
+  currentWordNumber: number,
+  excessQuoteToType: string
+): number {
+  let incorrectChars = 0;
+  const userTypedWord = excessQuoteToType.split(' ')[currentWordNumber];
+  let userTypedChar;
+  for (let idx = 0; idx < userTypedWord.length; idx++) {
+    if (excessQuoteToType) {
+      userTypedChar = excessQuoteToType.split(' ')[currentWordNumber][idx];
+    }
+    const correctChar = reassignWord[idx];
+    if (userTypedChar !== correctChar) incorrectChars++;
+  }
+  return incorrectChars;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +114,7 @@ function focusTextArea(): void {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-interface KeyLogic {
+export interface KeyLogic {
   currentWordNumber: number;
   userInputWordLength: number;
   quoteWordLength: number;
@@ -126,12 +186,61 @@ function remakeQuoteString(
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
+function generateTest(state: RootState): string[] {
+  let wordsToGenerate;
+  if (state.statSlice.useCountdown) {
+    wordsToGenerate = 100;
+  } else {
+    wordsToGenerate = state.typeInput.numOfWordsToType;
+  }
+  const randomWordList = [];
+
+  for (let i = 0; i < wordsToGenerate; i++) {
+    if (state.statSlice.language === 'HTML') {
+      const randomNumber = Math.floor(Math.random() * 100);
+      if (randomNumber > 50) {
+        randomWordList.push(
+          `</${
+            htmlElementsList[
+              Math.floor(Math.random() * htmlElementsList.length)
+            ]
+          }>`
+        );
+      } else {
+        randomWordList.push(
+          `<${
+            htmlElementsList[
+              Math.floor(Math.random() * htmlElementsList.length)
+            ]
+          }>`
+        );
+      }
+    } else if (state.statSlice.language === 'JavaScript') {
+      randomWordList.push(
+        javascriptWordList[
+          Math.floor(Math.random() * javascriptWordList.length)
+        ]
+      );
+    } else {
+      randomWordList.push(
+        state.typeInput.wordList[
+          Math.floor(Math.random() * state.typeInput.wordList.length)
+        ]
+      );
+    }
+  }
+  return randomWordList;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 export {
   deleteExcessLettersData,
   remakeQuoteString,
   CalculateWPM,
   calculateAccuracy,
   focusTextArea,
+  generateTest,
+  calculateRaw,
 };
 
 export const allWordsList = [
@@ -347,7 +456,6 @@ export const allWordsList = [
   'deep',
   'defense',
   'degree',
-  'Democrat',
   'democratic',
   'describe',
   'design',
@@ -670,8 +778,6 @@ export const allWordsList = [
   'move',
   'movement',
   'movie',
-  'Mr',
-  'Mrs',
   'much',
   'music',
   'must',
@@ -703,7 +809,6 @@ export const allWordsList = [
   'nothing',
   'notice',
   'now',
-  "n't",
   'number',
   'occur',
   'of',
@@ -848,7 +953,6 @@ export const allWordsList = [
   'remove',
   'report',
   'represent',
-  'Republican',
   'require',
   'research',
   'resource',
@@ -1049,11 +1153,10 @@ export const allWordsList = [
   'trial',
   'trip',
   'trouble',
-  'TRUE',
+  'true',
   'truth',
   'try',
   'turn',
-  'TV',
   'two',
   'type',
   'under',
@@ -1134,3 +1237,140 @@ export const allWordsList = [
   'your',
   'yourself',
 ];
+
+export const htmlElementsList = [
+  'a',
+  'abbr',
+  'address',
+  'area',
+  'article',
+  'aside',
+  'audio',
+  'b',
+  'blockquote',
+  'body',
+  'br',
+  'button',
+  'canvas',
+  'caption',
+  'code',
+  'col',
+  'data',
+  'dd',
+  'del',
+  'details',
+  'dialog',
+  'div',
+  'dl',
+  'dt',
+  'em',
+  'embed',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'head',
+  'header',
+  'hr',
+  'html',
+  'i',
+  'iframe',
+  'img',
+  'input',
+  'ins',
+  'label',
+  'legend',
+  'li',
+  'link',
+  'main',
+  'map',
+  'mark',
+  'meta',
+  'nav',
+  'noscript',
+  'object',
+  'ol',
+  'option',
+  'p',
+  'picture',
+  'pre',
+  'q',
+  'script',
+  'section',
+  'select',
+  'small',
+  'source',
+  'span',
+  'strong',
+  'style',
+  'sub',
+  'sup',
+  'svg',
+  'table',
+  'tbody',
+  'td',
+  'textarea',
+  'tfoot',
+  'th',
+  'thead',
+  'tr',
+  'ul',
+  'video',
+];
+
+export const javascriptWordList = [
+  'console',
+  '.log',
+  'Object',
+  'object',
+  '.keys',
+  '.push',
+  '.shift',
+  '.unshift',
+  '.pop',
+  'NaN',
+  'Math',
+  'Infinity',
+  '.isArray',
+  'array',
+  'async',
+  'await',
+  'const',
+  'let',
+  'var',
+  '=',
+  '[]',
+  '{}',
+  'return',
+  'function',
+  '=>',
+  'break',
+  'continue',
+  'while',
+  'for',
+  'continue',
+  'try',
+  'catch',
+  'debugger',
+  'throw',
+  'of',
+  'import',
+  'from',
+  'true',
+  'false',
+  '===',
+  '!==',
+  'module',
+  '.addEventListener',
+  'document',
+  '.querySelector',
+  '.getElementById',
+  '``',
+];
+////////////////////////////////////////////////////////////////////////////////////
