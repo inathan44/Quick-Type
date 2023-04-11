@@ -33,6 +33,7 @@ interface InitStatState {
   wpm: number;
   accuracy: number;
   skippedCharacters: number;
+  raw: number;
 }
 
 const initialState: InitStatState = {
@@ -47,6 +48,7 @@ const initialState: InitStatState = {
   wpm: 0,
   accuracy: 0,
   skippedCharacters: 0,
+  raw: 0,
 };
 
 export const addNewScore = createAsyncThunk(
@@ -117,6 +119,9 @@ const StatSlice = createSlice({
     adjustAccuracy(state, action: PayloadAction<number>) {
       state.accuracy = action.payload;
     },
+    adjustRaw(state: InitStatState, action: PayloadAction<number>) {
+      state.raw = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -141,6 +146,7 @@ export const {
   changeTestLangauge,
   adjustWpm,
   adjustAccuracy,
+  adjustRaw,
 } = StatSlice.actions;
 
 export const selectTimeElapsed = (state: RootState) =>
