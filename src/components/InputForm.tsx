@@ -18,15 +18,12 @@ import {
   QuoteFormat,
   selectRandomWords,
   selectNumOfWordsToType,
-  generateRandomWords,
 } from '../store/slices/TypeInputSlice';
 import TypeBoxText from './TypeBoxText';
 import { deleteExcessLettersData, remakeQuoteString } from '../helperFunctions';
 import Timer from './Timer';
 import {
-  adjustTime,
   incrementKeysPressed,
-  resetStats,
   incrementIncorrectKeys,
   selectIncorrectKeys,
   selectUseCountdown,

@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
-import axios from 'axios';
 import { Root } from 'react-dom/client';
+import axios from 'axios';
 import { RootState } from '..';
-import { allWordsList } from '../../helperFunctions';
-import { generateTest } from '../../helperFunctions';
+import { allWordsList, generateTest } from '../../helperFunctions';
 
 export interface QuoteFormat {
   text: string;
@@ -48,7 +47,7 @@ const initialState: InitTypeInputState = {
   testComplete: false,
   // The letters available to be typed, only these will show up on screen
   lettersAvailable:
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789-_';:?!",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,<>/123456789-_';:?!=`{}()[]",
   // Array of objects that hold quotes
   allQuotes: [],
   loading: false,
@@ -102,15 +101,6 @@ const typeInputSlice = createSlice({
     setTestWords(state, action: PayloadAction<number>) {
       state.numOfWordsToType = action.payload;
     },
-    generateRandomWords(state: InitTypeInputState) {
-      const wordsToGenerate = state.numOfWordsToType;
-      const randomWordList = [];
-      for (let i = 0; i < wordsToGenerate; i++) {
-        randomWordList.push(
-          state.wordList[Math.floor(Math.random() * state.wordList.length)]
-        );
-      }
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -137,7 +127,6 @@ export const {
   setUserTextInput,
   resetUserInput,
   setTestWords,
-  generateRandomWords,
 } = typeInputSlice.actions;
 
 export const selectNumOfWordsToType = (state: RootState) =>

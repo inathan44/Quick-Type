@@ -7,9 +7,15 @@ import {
   setTestTime,
   changeTestLangauge,
   resetStats,
+  selectLanguage,
+  selectStartingTime,
 } from '../store/slices/StatSlice';
 import OptionButton from './OptionButton';
-import { resetUserInput, setTestWords } from '../store/slices/TypeInputSlice';
+import {
+  resetUserInput,
+  selectNumOfWordsToType,
+  setTestWords,
+} from '../store/slices/TypeInputSlice';
 
 export type Mode = 'Time' | 'Words';
 export type Languages = 'English' | 'HTML' | 'JavaScript';
@@ -36,24 +42,27 @@ interface WordState {
 
 const OptionsMenu = () => {
   const useCountdown = useAppSelector(selectUseCountdown);
+  const testLanguage = useAppSelector(selectLanguage);
+  const startingTime = useAppSelector(selectStartingTime);
+  const numberofWordsToType = useAppSelector(selectNumOfWordsToType);
 
   const dispatch = useAppDispatch();
 
   const [mode, setMode] = useState<ModeState>({
-    activeMode: 'Words',
+    activeMode: useCountdown ? 'Time' : 'Words',
     modes: [{ id: 'Time' }, { id: 'Words' }],
   });
 
   const [language, setLanguage] = useState<LanguageState>({
-    activeLanguage: 'English',
+    activeLanguage: testLanguage,
     languages: [{ id: 'English' }, { id: 'HTML' }, { id: 'JavaScript' }],
   });
   const [time, setTime] = useState<TimeState>({
-    activeTime: 15,
+    activeTime: startingTime,
     times: [{ id: 15 }, { id: 30 }, { id: 60 }],
   });
   const [words, setWords] = useState<WordState>({
-    activeWords: 20,
+    activeWords: numberofWordsToType,
     words: [{ id: 10 }, { id: 20 }, { id: 50 }],
   });
 
@@ -129,9 +138,6 @@ const OptionsMenu = () => {
                   {word.id}
                 </OptionButton>
               ))}
-          {/* <OptionButton clickFunc={() => {}}>15s</OptionButton>
-          <OptionButton>30s</OptionButton>
-          <OptionButton>60s</OptionButton> */}
         </div>
       </SingleOption>
     </div>
