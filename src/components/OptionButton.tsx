@@ -1,10 +1,7 @@
-import React, { ReactNode, MouseEventHandler } from 'react';
+import React, { ReactNode } from 'react';
 import { Languages, Mode } from './OptionsMenu';
-import { selectUseCountdown, changeMode } from '../store/slices/StatSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../store/hooks';
 import { focusTextArea } from '../helperFunctions';
-import { selectUserTextInput } from '../store/slices/TypeInputSlice';
 import { resetFormatState } from '../store/slices/formatSlice';
 
 interface ButtonProps {
