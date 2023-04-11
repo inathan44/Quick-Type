@@ -16,6 +16,8 @@ import {
   selectAccuracy,
   adjustWpm,
   adjustAccuracy,
+  adjustRaw,
+  selectLanguage,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -24,7 +26,7 @@ import {
   selectDuplicateQuoteToType,
   setTestComplete,
 } from '../store/slices/TypeInputSlice';
-import { calculateAccuracy } from '../helperFunctions';
+import { calculateAccuracy, calculateRaw } from '../helperFunctions';
 
 const Timer = () => {
   const dispatch = useAppDispatch();
@@ -35,14 +37,15 @@ const Timer = () => {
   const quoteToType = useAppSelector(selectQuoteToType);
   const userTextInput = useAppSelector(selectUserTextInput);
   const totalKeysPressed = useAppSelector(selectTotalKeysPressed);
-  const duplicateQuoteToType = useAppSelector(selectDuplicateQuoteToType);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const testComplete = useAppSelector(selectTestComplete);
   const useCountdown = useAppSelector(selectUseCountdown);
   const wpm = useAppSelector(selectWpm);
+  const language = useAppSelector(selectLanguage);
 
   useEffect(() => {
-    const raw = totalKeysPressed / 5 / (timeElapsed / 60);
+    const raw = calculateRaw(totalKeysPressed, timeElapsed);
+    dispatch(adjustRaw(raw));
 
     const accuracy = calculateAccuracy(
       totalKeysPressed,
@@ -66,7 +69,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'English',
+              language,
               testType: 'words',
               userId: userData.id,
             })
@@ -80,7 +83,7 @@ const Timer = () => {
               wpm,
               raw,
               accuracy,
-              language: 'English',
+              language,
               testType: 'words',
             })
           );

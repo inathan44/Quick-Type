@@ -11,6 +11,7 @@ interface ButtonProps {
   children: ReactNode;
   clickFunc: any;
   id: Mode | Languages | number;
+  selected: boolean;
 }
 
 const OptionButton = (props: ButtonProps) => {
@@ -23,7 +24,9 @@ const OptionButton = (props: ButtonProps) => {
         focusTextArea();
         dispatch(resetFormatState());
       }}
-      className="border-2 px-2 py-1 rounded-lg text-sm text-gray-300 border-gray-300"
+      className={`border-2 px-2 py-1 rounded-lg text-sm text-gray-300 transition-all ${
+        !props.selected ? 'border-transparent' : ' border-gray-300'
+      }`}
     >
       {props.children}
     </button>

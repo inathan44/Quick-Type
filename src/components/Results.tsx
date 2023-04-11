@@ -12,6 +12,7 @@ const Results = () => {
   const wpm = useAppSelector(selectWpm);
   const accuracy = useAppSelector(selectAccuracy);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
+  const raw = useAppSelector((state) => state.statSlice.raw);
 
   return (
     <section className="text-gray-300">
@@ -19,7 +20,9 @@ const Results = () => {
       <div className="flex text-black justify-between w-11/12 mx-auto">
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
           <h2 className="font-bold text-5xl">WPM</h2>
-          <p className="text-4xl font-bold text-yellow-600">{wpm}</p>
+          <p className="text-4xl font-bold text-yellow-600">
+            {Math.round(wpm)}
+          </p>
         </div>
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
           <h2 className="font-bold text-5xl">Accuracy</h2>
@@ -34,9 +37,7 @@ const Results = () => {
         </div>
         <div className="w-60 h-60 bg-gray-300 rounded-2xl opacity-75 flex flex-col items-center gap-6 justify-center hover:bg-white  ease-in transition-all">
           <h2 className="font-bold text-5xl">Raw</h2>
-          <p className="text-4xl font-bold text-sky-700">
-            {lastTest ? lastTest.raw : 'Calculating...'}
-          </p>
+          <p className="text-4xl font-bold text-sky-700">{Math.round(raw)}</p>
         </div>
       </div>
     </section>
