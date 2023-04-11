@@ -197,29 +197,29 @@ function generateTest(state: RootState): string[] {
   for (let i = 0; i < wordsToGenerate; i++) {
     if (state.statSlice.language === 'HTML') {
       const randomNumber = Math.floor(Math.random() * 100);
-      if (randomNumber > 90) {
+      if (randomNumber > 50) {
         randomWordList.push(
           `</${
-            state.typeInput.wordList[
-              Math.floor(Math.random() * state.typeInput.wordList.length)
-            ]
-          }>`
-        );
-      } else if (randomNumber < 10) {
-        randomWordList.push(
-          `<${
-            state.typeInput.wordList[
-              Math.floor(Math.random() * state.typeInput.wordList.length)
+            htmlElementsList[
+              Math.floor(Math.random() * htmlElementsList.length)
             ]
           }>`
         );
       } else {
         randomWordList.push(
-          state.typeInput.wordList[
-            Math.floor(Math.random() * state.typeInput.wordList.length)
-          ]
+          `<${
+            htmlElementsList[
+              Math.floor(Math.random() * htmlElementsList.length)
+            ]
+          }>`
         );
       }
+    } else if (state.statSlice.language === 'JavaScript') {
+      randomWordList.push(
+        javascriptWordList[
+          Math.floor(Math.random() * javascriptWordList.length)
+        ]
+      );
     } else {
       randomWordList.push(
         state.typeInput.wordList[
@@ -1240,5 +1240,141 @@ export const allWordsList = [
   'young',
   'your',
   'yourself',
+];
+
+export const htmlElementsList = [
+  'a',
+  'abbr',
+  'address',
+  'area',
+  'article',
+  'aside',
+  'audio',
+  'b',
+  'blockquote',
+  'body',
+  'br',
+  'button',
+  'canvas',
+  'caption',
+  'code',
+  'col',
+  'data',
+  'dd',
+  'del',
+  'details',
+  'dialog',
+  'div',
+  'dl',
+  'dt',
+  'em',
+  'embed',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'head',
+  'header',
+  'hr',
+  'html',
+  'i',
+  'iframe',
+  'img',
+  'input',
+  'ins',
+  'label',
+  'legend',
+  'li',
+  'link',
+  'main',
+  'map',
+  'mark',
+  'meta',
+  'nav',
+  'noscript',
+  'object',
+  'ol',
+  'option',
+  'p',
+  'picture',
+  'pre',
+  'q',
+  'script',
+  'section',
+  'select',
+  'small',
+  'source',
+  'span',
+  'strong',
+  'style',
+  'sub',
+  'sup',
+  'svg',
+  'table',
+  'tbody',
+  'td',
+  'textarea',
+  'tfoot',
+  'th',
+  'thead',
+  'tr',
+  'ul',
+  'video',
+];
+
+export const javascriptWordList = [
+  'console',
+  '.log',
+  'Object',
+  'object',
+  '.keys',
+  '.push',
+  '.shift',
+  '.unshift',
+  '.pop',
+  'NaN',
+  'Math',
+  'Infinity',
+  '.isArray',
+  'array',
+  'async',
+  'await',
+  'const',
+  'let',
+  'var',
+  '=',
+  '[]',
+  '{}',
+  'return',
+  'function',
+  '=>',
+  'break',
+  'continue',
+  'while',
+  'for',
+  'continue',
+  'try',
+  'catch',
+  'debugger',
+  'throw',
+  'of',
+  'import',
+  'from',
+  'true',
+  'false',
+  '===',
+  '!==',
+  'module',
+  '.addEventListener',
+  'document',
+  '.querySelector',
+  '.getElementById',
+  '``',
 ];
 ////////////////////////////////////////////////////////////////////////////////////
