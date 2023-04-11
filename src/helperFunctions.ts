@@ -1,3 +1,5 @@
+import { RootState } from './store';
+
 ////////////////////////////////////////////////////////////////////////////////////
 function CalculateWPM(
   useCountdown: boolean,
@@ -183,12 +185,60 @@ function remakeQuoteString(
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
+function generateTest(state: RootState): string[] {
+  let wordsToGenerate;
+  if (state.statSlice.useCountdown) {
+    wordsToGenerate = 100;
+  } else {
+    wordsToGenerate = state.typeInput.numOfWordsToType;
+  }
+  const randomWordList = [];
+
+  for (let i = 0; i < wordsToGenerate; i++) {
+    if (state.statSlice.language === 'HTML') {
+      const randomNumber = Math.floor(Math.random() * 100);
+      if (randomNumber > 90) {
+        randomWordList.push(
+          `</${
+            state.typeInput.wordList[
+              Math.floor(Math.random() * state.typeInput.wordList.length)
+            ]
+          }>`
+        );
+      } else if (randomNumber < 10) {
+        randomWordList.push(
+          `<${
+            state.typeInput.wordList[
+              Math.floor(Math.random() * state.typeInput.wordList.length)
+            ]
+          }>`
+        );
+      } else {
+        randomWordList.push(
+          state.typeInput.wordList[
+            Math.floor(Math.random() * state.typeInput.wordList.length)
+          ]
+        );
+      }
+    } else {
+      randomWordList.push(
+        state.typeInput.wordList[
+          Math.floor(Math.random() * state.typeInput.wordList.length)
+        ]
+      );
+    }
+  }
+  return randomWordList;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 export {
   deleteExcessLettersData,
   remakeQuoteString,
   CalculateWPM,
   calculateAccuracy,
   focusTextArea,
+  generateTest,
 };
 
 export const allWordsList = [
@@ -1191,3 +1241,4 @@ export const allWordsList = [
   'your',
   'yourself',
 ];
+////////////////////////////////////////////////////////////////////////////////////
