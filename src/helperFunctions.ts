@@ -9,31 +9,16 @@ function CalculateWPM(
   duplicateQuoteToType: string,
   userTextInput: string
 ): number {
-  const logicData = deleteExcessLettersData(
-    userTextInput,
+  // const correct =
+  //   excessQuoteToType.split('').filter((char, idx) => char === quoteToType[idx])
+  //     .length -
+  //   excessQuoteToType.split('').filter((char) => char === '#').length;
+
+  const correct = calculateCorrectCharacters(
+    excessQuoteToType,
+    quoteToType,
     duplicateQuoteToType,
-    quoteToType
-  );
-
-  const correct =
-    excessQuoteToType.split('').filter((char, idx) => char === quoteToType[idx])
-      .length -
-    excessQuoteToType.split('').filter((char) => char === '#').length;
-
-  console.log(
-    'correct current word',
-    duplicateQuoteToType.split(' ')[logicData.currentWordNumber - 1]
-  );
-  console.log(
-    'Correct Words:',
-    excessQuoteToType
-      .split(' ')
-      .filter(
-        (word, idx) =>
-          word !== duplicateQuoteToType.split(' ')[idx] &&
-          idx !== logicData.currentWordNumber - 1
-      )
-      .join(' ').length
+    userTextInput
   );
 
   if (useCountdown) {
@@ -47,6 +32,43 @@ function CalculateWPM(
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
+function calculateCorrectCharacters(
+  excessQuoteToType: string,
+  quoteToType: string,
+  duplicateQuoteToType: string,
+  userTextInput: string
+): number {
+  const logicData = deleteExcessLettersData(
+    userTextInput,
+    duplicateQuoteToType,
+    quoteToType
+  );
+
+  const numOfIncorrectCharsInWord = incorrectCharsInCurrentWord(
+    logicData.reassignWord,
+    logicData.currentWordNumber - 1,
+    excessQuoteToType
+  );
+
+  const allLettersTyped = excessQuoteToType.length;
+  const timesSkipped = excessQuoteToType?.match(/[#]/g)?.length;
+  const lettersInMispelledWords = excessQuoteToType
+    .split(' ')
+    .filter(
+      (word, idx) =>
+        word !== duplicateQuoteToType.split(' ')[idx] &&
+        idx !== logicData.currentWordNumber - 1
+    )
+    .join('').length;
+
+  return (
+    allLettersTyped -
+    (timesSkipped || 0) -
+    lettersInMispelledWords -
+    numOfIncorrectCharsInWord
+  );
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 function calculateAccuracy(
   totalKeysPressed: number,
@@ -54,10 +76,31 @@ function calculateAccuracy(
   userTextInput: string
 ): number {
   const incorrectNonSkipped =
+    // Regex finds '%' char which represents letters that were skipped by pressing space early on a word, which shouldn't count towards incorrect letters
     incorrectKeys - userTextInput.replace(/[^%]/g, '').length;
   return +((totalKeysPressed - incorrectNonSkipped) / totalKeysPressed).toFixed(
     2
   );
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+function incorrectCharsInCurrentWord(
+  reassignWord: string,
+  currentWordNumber: number,
+  excessQuoteToType: string
+): number {
+  let incorrectChars = 0;
+  const userTypedWord = excessQuoteToType.split(' ')[currentWordNumber];
+  let userTypedChar;
+  for (let idx = 0; idx < userTypedWord.length; idx++) {
+    if (excessQuoteToType) {
+      userTypedChar = excessQuoteToType.split(' ')[currentWordNumber][idx];
+    }
+    const correctChar = reassignWord[idx];
+    if (userTypedChar !== correctChar) incorrectChars++;
+  }
+  return incorrectChars;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
