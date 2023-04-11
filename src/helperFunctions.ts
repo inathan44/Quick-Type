@@ -11,11 +11,6 @@ function CalculateWPM(
   duplicateQuoteToType: string,
   userTextInput: string
 ): number {
-  // const correct =
-  //   excessQuoteToType.split('').filter((char, idx) => char === quoteToType[idx])
-  //     .length -
-  //   excessQuoteToType.split('').filter((char) => char === '#').length;
-
   const correct = calculateCorrectCharacters(
     excessQuoteToType,
     quoteToType,
@@ -83,6 +78,12 @@ function calculateAccuracy(
   return +((totalKeysPressed - incorrectNonSkipped) / totalKeysPressed).toFixed(
     2
   );
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+function calculateRaw(totalKeysPressed: number, time: number): number {
+  const raw = +(totalKeysPressed / 5 / (time / 60)).toFixed(2);
+  return raw;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +240,7 @@ export {
   calculateAccuracy,
   focusTextArea,
   generateTest,
+  calculateRaw,
 };
 
 export const allWordsList = [
