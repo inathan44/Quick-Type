@@ -131,9 +131,7 @@ const InputForm = () => {
         </h1>
         <div
           id="test-box"
-          className={`relative px-8 text-3xl self-start border-x-2  min-w-full h-28 overflow-hidden ${
-            border ? 'border-[#55848a]' : 'border-transparent'
-          }`}
+          className={`relative px-8 text-3xl self-start border-2 border-transparent min-w-full h-28 overflow-hidden`}
         >
           <TypeBoxText />
           <textarea
