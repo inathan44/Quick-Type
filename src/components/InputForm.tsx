@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { keyPress } from '../keyPressFunction';
+import { deletePress, keyPress } from '../keyPressFunction';
 import {
   selectTestComplete,
   setTestComplete,
@@ -38,11 +38,14 @@ import { useNavigate } from 'react-router-dom';
 const InputForm = () => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-
   const [border, setBorder] = useState(false);
 
   const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
+
+  const [keyEvent, setKeyEvent] =
+    useState<React.KeyboardEvent<HTMLTextAreaElement> | null>(null);
+
+  const [changeEvent, setChangeEvent] = useState<string | null>(null);
 
   const testComplete: boolean = useAppSelector(selectTestComplete);
   const allQuotes: QuoteFormat[] = useAppSelector(selectAllQuotes);
@@ -57,7 +60,6 @@ const InputForm = () => {
   const duplicateQuoteToType: string = useAppSelector(
     selectDuplicateQuoteToType
   );
-  const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const useCountdown = useAppSelector(selectUseCountdown);
 
   // Checks if key pressed is part of the character bank
@@ -102,6 +104,15 @@ const InputForm = () => {
     }
   }, [userTextInput, quoteToType]);
 
+  useEffect(() => {
+    if (keyEvent && changeEvent) {
+      if (handleDeletePress(keyEvent)) {
+        handleKeyPress(changeEvent);
+      }
+    }
+    setChangeEvent(null);
+  }, [changeEvent]);
+
   function handleFocus() {
     setBorder(true);
     const cursor = document.getElementById('cursor');
@@ -117,8 +128,6 @@ const InputForm = () => {
       cursor.style.display = 'none';
     }
   }
-
-  const textInput = useRef(null);
 
   return (
     <>
@@ -138,12 +147,13 @@ const InputForm = () => {
             value={userTextInput}
             id="type-test"
             className="border-2 border-white opacity-0 w-full h-full text-2xl rounded absolute py-4 px-8 left-0 top-0 "
-            onChange={() => {}}
-            onKeyDown={(e) => handleKeyPress(e)}
+            onChange={(e) => {
+              setChangeEvent(e.target.value.slice(-1));
+            }}
+            onKeyDown={(e) => setKeyEvent(e)}
             onFocus={handleFocus}
             onBlur={handleBlur}
             autoFocus
-            ref={textInput}
           />
         </div>
       </div>
@@ -153,7 +163,30 @@ const InputForm = () => {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // KEY PRESS FUNCTION BELOW, handles key logic, colors, etc
 
-  function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+  function handleDeletePress(
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ): boolean {
+    return deletePress(
+      e,
+      setLastKeyPressed,
+      deleteExcessLettersData,
+      userTextInput,
+      duplicateQuoteToType,
+      quoteToType,
+      useCountdown,
+      countdownTimer,
+      isValidChar,
+      dispatch,
+      incrementKeysPressed,
+      setQuoteToType,
+      setUserTextInput,
+      setExcessQuoteToType,
+      excessQuoteToType,
+      incrementIncorrectKeys,
+      remakeQuoteString
+    );
+  }
+  function handleKeyPress(e: string): void {
     keyPress(
       e,
       setLastKeyPressed,
