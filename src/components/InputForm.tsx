@@ -204,7 +204,8 @@ const InputForm = () => {
       setExcessQuoteToType,
       excessQuoteToType,
       incrementIncorrectKeys,
-      remakeQuoteString
+      remakeQuoteString,
+      language
     );
   }
 };

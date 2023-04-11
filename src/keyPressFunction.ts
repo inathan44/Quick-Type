@@ -30,11 +30,11 @@ export function keyPress(
   setExcessQuoteToType: typeof setExcessQuoteToTypeAction,
   excessQuoteToType: string,
   incrementIncorrectKeys: typeof incrementIncorrectKeysAction,
-  remakeQuoteString: typeof remakeQuoteStringFunc
+  remakeQuoteString: typeof remakeQuoteStringFunc,
+  language: string
 ): void {
-  const keyPressed = e;
-
-  console.log('e.target.value', e);
+  const keyPressed = language === 'English' ? e.toLowerCase() : e;
+  console.log('e.target.value', keyPressed);
 
   setLastKeyPressed(keyPressed);
   const logicData = deleteExcessLettersData(
