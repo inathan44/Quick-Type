@@ -29,6 +29,7 @@ import {
   selectUseCountdown,
   selectCountdownTimer,
   selectLanguage,
+  resetStats,
 } from '../store/slices/StatSlice';
 import Countdown from './Countdown';
 import TestStatHeader from './TestStatHeader';
@@ -80,6 +81,7 @@ const InputForm = () => {
     );
     dispatch(setDuplicateQuoteToType(randomWordList.join(' ') || 'Loading'));
     dispatch(setTestComplete(false));
+    dispatch(resetStats());
     return () => {
       dispatch(setTestComplete(false));
     };
