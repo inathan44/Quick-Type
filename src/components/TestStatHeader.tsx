@@ -91,19 +91,19 @@ const TestStatHeader = () => {
   }, [stateWpm]);
 
   return (
-    <div className="flex justify-center text-white gap-16 items-center">
+    <div className="text-center px-4 flex justify-center text-white gap-16 items-center">
       <div className="flex flex-col items-center">
-        <h3 className="text-2xl">WPM</h3>
+        <h3 className="sm:text-2xl text-xl">WPM</h3>
         <p className="text-green-400 text-xl">{wpm === Infinity ? '0' : wpm}</p>
       </div>
-      <div className="flex flex-col items-center text-4xl">
+      <div className="flex flex-col items-center text-3xl sm:text-4xl">
         <h3>{useCountdown ? 'Time Remaining' : 'Time Elapsed'}</h3>
         <p className="text-yellow-400">
           {useCountdown ? Math.floor(countdownTimer) : Math.floor(timeElapsed)}
         </p>
       </div>
       <div className="flex flex-col items-center">
-        <h3 className="text-2xl">Errors</h3>
+        <h3 className="sm:text-2xl text-xl">Errors</h3>
         <p className="text-red-400 text-xl">{incorrectKeys}</p>
       </div>
     </div>

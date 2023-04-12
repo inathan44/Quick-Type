@@ -27,7 +27,7 @@ const NavBar = () => {
             </h1>
           </div>
         </Link>
-        <div className="flex gap-4">
+        <div className="hidden lg:flex gap-4">
           <NavLink
             linkName="leaderboards"
             imgUrl={barChartIcon}

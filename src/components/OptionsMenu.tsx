@@ -99,22 +99,24 @@ const OptionsMenu = () => {
   }
 
   return (
-    <div className="flex justify-between max-w-3xl mx-auto py-8 text-white">
-      <SingleOption>
-        <h4 className="">Language</h4>
-        <div className="flex gap-5">
-          {languages.languages.map((language) => (
-            <OptionButton
-              id={language.id}
-              clickFunc={toggleLanguage}
-              key={language.id}
-              selected={language.id === languages.activeLanguage}
-            >
-              {language.id}
-            </OptionButton>
-          ))}
-        </div>
-      </SingleOption>
+    <div className="flex justify-center max-w-3xl mx-auto py-8 text-white">
+      <div className="max-w-[256px] hidden sm:block">
+        <SingleOption>
+          <h4 className="">Language</h4>
+          <div className="flex gap-5">
+            {languages.languages.map((language) => (
+              <OptionButton
+                id={language.id}
+                clickFunc={toggleLanguage}
+                key={language.id}
+                selected={language.id === languages.activeLanguage}
+              >
+                {language.id}
+              </OptionButton>
+            ))}
+          </div>
+        </SingleOption>
+      </div>
       <SingleOption>
         <h4 className="">Mode</h4>
         <div className="flex gap-5">
