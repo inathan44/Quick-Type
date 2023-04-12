@@ -21,7 +21,7 @@ const Results = () => {
       <div className="mx-auto grid grid-cols-2 content-center justify-center gap-2 px-2 md:flex text-black md:justify-between w-11/12 sm:mx-auto">
         <SingleResult stat={Math.round(wpm)} statName="WPM" />
         <SingleResult
-          stat={accuracy < 0.7 ? 'Too low' : (accuracy * 100).toFixed(0)}
+          stat={accuracy < 0.7 ? 'Too low' : `${(accuracy * 100).toFixed(0)}%`}
           statName="Accuracy"
         />
         <SingleResult stat={incorrectKeys} statName="Errors" />
