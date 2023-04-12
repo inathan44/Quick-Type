@@ -34,7 +34,6 @@ export function keyPress(
   language: string
 ): void {
   const keyPressed = language === 'English' ? e.toLowerCase() : e;
-  console.log('e.target.value', keyPressed);
 
   setLastKeyPressed(keyPressed);
   const logicData = deleteExcessLettersData(
@@ -306,11 +305,7 @@ export function deletePress(
         userTextInput.length == 0 ||
         logicData.currentWordNumber === duplicateQuoteToType.split(' ').length
       ) {
-        console.log('do nothing');
       } else {
-        dispatch(
-          incrementIncorrectKeys(logicData.lettersRemainingInCurrentWord)
-        );
         // # char indicates a space was pressed before the end of a word
         let skipToNextWord = '#';
         for (let i = 0; i < logicData.lettersRemainingInCurrentWord - 1; i++) {
@@ -329,6 +324,6 @@ export function deletePress(
       dispatch(setExcessQuoteToType(excessQuoteToType.concat(keyPressed)));
     }
   }
-  console.log('retturn of deleted func', keyPressed !== 'Backspace');
+
   return keyPressed !== 'Backspace';
 }
