@@ -1,4 +1,5 @@
-import { RootState } from './store';
+import { AppDispatch, RootState } from './store';
+import { ScoreTracker, pushScore } from './store/slices/StatSlice';
 
 ////////////////////////////////////////////////////////////////////////////////////
 function CalculateWPM(
@@ -88,6 +89,16 @@ function calculateRaw(totalKeysPressed: number, time: number): number {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+function incorrectKeyPresses(
+  excessQuoteToType: string,
+  incorrectKeys: number
+): number {
+  const skippedChars = excessQuoteToType?.match(/[%]/g)?.length;
+  return skippedChars ? incorrectKeys - skippedChars : incorrectKeys;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
 function incorrectCharsInCurrentWord(
   reassignWord: string,
   currentWordNumber: number,
@@ -105,7 +116,27 @@ function incorrectCharsInCurrentWord(
   }
   return incorrectChars;
 }
+////////////////////////////////////////////////////////////////////////////////////
+function addScoreToState(
+  currentScores: ScoreTracker[],
+  dispatch: AppDispatch,
+  wpm: number,
+  raw: number,
+  errors: number,
+  time: number,
+  func: typeof pushScore
+): void {
+  const recentErrors = currentScores.reduce((acc, cv) => acc + cv.errors, 0);
 
+  dispatch(
+    func({
+      raw,
+      wpm,
+      errors: errors - recentErrors,
+      time,
+    })
+  );
+}
 ////////////////////////////////////////////////////////////////////////////////////
 
 function focusTextArea(): void {
@@ -166,7 +197,6 @@ function deleteExcessLettersData(
     lettersRemainingInCurrentWord,
   };
 }
-////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////
 function remakeQuoteString(
@@ -241,6 +271,8 @@ export {
   focusTextArea,
   generateTest,
   calculateRaw,
+  incorrectKeyPresses,
+  addScoreToState,
 };
 
 export const allWordsList = [

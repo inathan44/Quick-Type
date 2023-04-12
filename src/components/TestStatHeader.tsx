@@ -12,6 +12,8 @@ import {
   selectStartingTime,
   adjustWpm,
   selectWpm,
+  selectCurrentScores,
+  pushScore,
 } from '../store/slices/StatSlice';
 import {
   selectTestComplete,
@@ -21,7 +23,12 @@ import {
   selectExcessQuoteToType,
 } from '../store/slices/TypeInputSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { CalculateWPM } from '../helperFunctions';
+import {
+  CalculateWPM,
+  addScoreToState,
+  calculateRaw,
+  incorrectKeyPresses,
+} from '../helperFunctions';
 
 const TestStatHeader = () => {
   const dispatch = useAppDispatch();
@@ -40,45 +47,69 @@ const TestStatHeader = () => {
   const startingTime = useAppSelector(selectStartingTime);
   const excessQuoteToType = useAppSelector(selectExcessQuoteToType);
   const stateWpm = useAppSelector(selectWpm);
+  const currentScores = useAppSelector(selectCurrentScores);
 
   useEffect(() => {
-    dispatch(
-      adjustWpm(
-        CalculateWPM(
-          useCountdown,
-          timeElapsed,
-          countdownTimer,
-          startingTime,
-          excessQuoteToType,
-          quoteToType,
-          duplicateQuoteToType,
-          userTextInput
-        )
-      )
+    const wordsPerMin = CalculateWPM(
+      useCountdown,
+      timeElapsed,
+      countdownTimer,
+      startingTime,
+      excessQuoteToType,
+      quoteToType,
+      duplicateQuoteToType,
+      userTextInput
     );
+
+    dispatch(adjustWpm(wordsPerMin));
   }, [userTextInput]);
 
   useEffect(() => {
-    dispatch(
-      adjustWpm(
-        CalculateWPM(
-          useCountdown,
-          timeElapsed,
-          countdownTimer,
-          startingTime,
-          excessQuoteToType,
-          quoteToType,
-          duplicateQuoteToType,
-          userTextInput
-        )
-      )
+    const wordsPerMin = CalculateWPM(
+      useCountdown,
+      timeElapsed,
+      countdownTimer,
+      startingTime,
+      excessQuoteToType,
+      quoteToType,
+      duplicateQuoteToType,
+      userTextInput
     );
+
+    const errors = incorrectKeyPresses(excessQuoteToType, incorrectKeys);
+
+    dispatch(adjustWpm(wordsPerMin));
+
     if (useCountdown) {
+      const raw =
+        calculateRaw(totalKeysPressed, startingTime - countdownTimer) || 0;
+
       if (Number.isInteger(countdownTimer)) {
+        addScoreToState(
+          currentScores,
+          dispatch,
+          wordsPerMin,
+          raw,
+          errors,
+          startingTime - countdownTimer,
+          pushScore
+        );
         setWpm(Math.floor(stateWpm));
       }
     } else {
       if (Number.isInteger(timeElapsed) && timeElapsed !== 0) {
+        const raw = calculateRaw(totalKeysPressed, timeElapsed);
+
+        addScoreToState(
+          currentScores,
+          dispatch,
+          wordsPerMin,
+          raw,
+          errors,
+          timeElapsed,
+          pushScore
+        );
+
         setWpm(Math.floor(stateWpm));
       }
     }
@@ -89,6 +120,38 @@ const TestStatHeader = () => {
       setWpm(stateWpm);
     }
   }, [stateWpm]);
+
+  useEffect(() => {
+    if (timeElapsed !== 0 || countdownTimer !== startingTime) {
+      const wordsPerMin = CalculateWPM(
+        useCountdown,
+        timeElapsed,
+        countdownTimer,
+        startingTime,
+        excessQuoteToType,
+        quoteToType,
+        duplicateQuoteToType,
+        userTextInput
+      );
+
+      const raw = calculateRaw(
+        totalKeysPressed,
+        useCountdown ? startingTime - countdownTimer : timeElapsed
+      );
+
+      const errors = incorrectKeyPresses(excessQuoteToType, incorrectKeys);
+
+      addScoreToState(
+        currentScores,
+        dispatch,
+        wordsPerMin,
+        raw,
+        errors,
+        useCountdown ? startingTime - countdownTimer : timeElapsed,
+        pushScore
+      );
+    }
+  }, [testComplete]);
 
   return (
     <div className="text-center px-4 flex justify-center text-white gap-16 items-center">
