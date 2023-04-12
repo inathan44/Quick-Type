@@ -102,6 +102,21 @@ const Timer = () => {
       }
       dispatchData();
     }
+    if (countdownTimer !== startingTime) {
+      localStorage.setItem(
+        'lastTest',
+        JSON.stringify({
+          timeElapsed: startingTime,
+          totalKeysPressed,
+          incorrectKeys,
+          wpm,
+          raw,
+          accuracy,
+          language,
+          testType: 'time',
+        })
+      );
+    }
     dispatch(authorizeToken());
   }, [testComplete]);
 

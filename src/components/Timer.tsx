@@ -91,6 +91,22 @@ const Timer = () => {
       }
       dispatchData();
     }
+    if (timeElapsed > 0) {
+      localStorage.setItem(
+        'lastTest',
+        JSON.stringify({
+          timeElapsed,
+          totalKeysPressed,
+          incorrectKeys,
+          wpm,
+          raw,
+          accuracy,
+          language,
+          testType: 'words',
+        })
+      );
+    }
+
     dispatch(authorizeToken());
   }, [testComplete]);
 
@@ -113,10 +129,13 @@ const Timer = () => {
 
   useEffect(() => {
     let interval: any = null;
+
+    const timeInterval = 200;
+
     if (timerActive) {
       interval = setInterval(() => {
-        dispatch(adjustTime(timeElapsed + 0.5));
-      }, 500);
+        dispatch(adjustTime(timeElapsed + timeInterval / 1000));
+      }, timeInterval);
     } else if (!timerActive && timeElapsed !== 0) {
       clearInterval(interval);
     }

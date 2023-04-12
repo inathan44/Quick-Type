@@ -133,7 +133,7 @@ const OptionsMenu = () => {
         </div>
       </SingleOption>
       <SingleOption>
-        <h4 className="">{useCountdown ? 'Time' : 'Quote'}</h4>
+        <h4 className="">{useCountdown ? 'Time' : 'Words'}</h4>
         <div className="flex gap-5">
           {useCountdown
             ? times.times.map((time) => (

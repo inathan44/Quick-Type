@@ -1,19 +1,36 @@
-import React from 'react';
-import { useAppSelector } from '../store/hooks';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectLastTest,
   selectWpm,
   selectAccuracy,
   selectIncorrectKeys,
+  Stat,
+  adjustWpm,
+  adjustAccuracy,
+  adjustRaw,
+  setLastTast,
+  setIncorrectKeys,
 } from '../store/slices/StatSlice';
 import SingleResult from './SingleResult';
 
 const Results = () => {
-  const lastTest = useAppSelector(selectLastTest) || null;
+  const dispatch = useAppDispatch();
   const wpm = useAppSelector(selectWpm);
   const accuracy = useAppSelector(selectAccuracy);
   const incorrectKeys = useAppSelector(selectIncorrectKeys);
   const raw = useAppSelector((state) => state.statSlice.raw);
+
+  useEffect(() => {
+    const lastTest: Stat = JSON.parse(localStorage.getItem('lastTest') || '{}');
+    dispatch(setLastTast(lastTest));
+    if (!wpm) {
+      dispatch(adjustWpm(lastTest.wpm));
+      dispatch(adjustAccuracy(lastTest.accuracy));
+      dispatch(setIncorrectKeys(lastTest.incorrectKeys));
+      dispatch(adjustRaw(lastTest.raw));
+    }
+  }, []);
 
   return (
     <section className="text-gray-300 flex flex-col items-center">
